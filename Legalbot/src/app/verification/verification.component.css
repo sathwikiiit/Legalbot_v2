@@ -1,0 +1,56 @@
+.type{
+    padding: 30px;
+    margin: 30px, auto;
+    display: flex;
+    align-items: center;
+}
+.toinclude{
+    display: grid;
+    grid-auto-flow: column;
+}
+.toinclude:nth-child(2n){
+    column-width: max-content;
+}
+.toinclude:nth-child(2n+1){
+    text-align: left;
+}
+button{
+    background-color: darkgreen;
+    width: 20%;
+    margin: 5px 40%;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+}
+
+.verification-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-y: scroll;
+    max-height: 50%;
+  }
+ *{
+    font-size: small;
+}
+  
+  .verification-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .verification-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .verification-item h2 {
+    font-weight: bold;
+  }
+  
+  .verification-item ul {
+    list-style: none;
+    padding: 0;
+  }
+  

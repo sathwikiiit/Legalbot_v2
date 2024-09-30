@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+    margin: 0px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+}
+form{
+	border-radius: 1%;
+	box-shadow: 2px 2px #555;
+	background-color:#cde4e9;
+}
+
+input[type=text],input[type=password] ,textarea {
+	padding: 10px;
+	box-sizing: border-box;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-bottom: 20px;
+}
+label, input[type=checkbox]{
+	padding: 2px 5px;
+	margin: 5px;
+	height: 20px;
+}
+
+input[type=text]:focus,textarea:focus {
+	background-color: aquamarine;
+}
+table {
+    background: #012B39;
+    border-radius: 0.25em;
+    border-collapse: collapse;
+  }
+th {
+    border-bottom: 1px solid #364043;
+    color: #E2B842;
+    font-weight: 600;
+    padding: 0.5em 1em;
+    text-align: center;
+}
+td {
+    color: #fff;
+    font-weight: 400;
+    padding: 0.65em 1em;
+}
+
+.disabled td {
+    color: #4F5F64;
+}
+
+tbody tr {
+    transition: background 0.25s ease;
+}
+
+tbody tr:hover {
+    background: #014055;
+}
+

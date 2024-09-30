@@ -1,0 +1,45 @@
+<form (ngSubmit)="submited()" [formGroup]="formdata">
+  <div class="type">
+    <label for="suitType">Type of Suit: </label>
+    <select id="suitType" formControlName="suitType">
+      <option>Suit For Partition</option>
+      <option>Suit For Declaration & Injunction</option>
+      <option>Suit For Declaration & Recovery of posession</option>
+      <option>Suit For Injunction</option>
+      <option>Suit For Recovery of Amount</option>
+    </select>
+    <label for="Court">Court Name</label>
+    <input type="text" id="Court" formControlName="court" />
+    <label for="City">City</label>
+    <input type="text" id="City" formControlName="city" />
+    <label for="counselDetails">Counsel</label>
+    <textarea
+      type="text"
+      id="counselDetails"
+      formControlName="counselDetails"
+    ></textarea>
+  </div>
+  <div class="parties">
+    <label for="plaintiff1">Plaintiff No. 1</label>
+    <input type="text" id="plaintiff1" formControlName="plaintiff1" />
+    <label for="defendant1">Defendant No. 1</label>
+    <input type="text" id="defendant1" formControlName="defendant1" />
+    <label for="plaintiffs">Plaintiffs</label>
+    <textarea
+      type="text"
+      id="plaintiffs"
+      formControlName="plaintiffs"
+    ></textarea>
+    <label for="defendants">Defendants</label>
+    <textarea
+      type="text"
+      id="defendants"
+      formControlName="defendants"
+    ></textarea>
+  </div>
+  <div formArrayName="property">
+    <app-property *ngFor="let prop of formdata.controls.property.controls;let i =index" [property]="prop" [id]="i+1" (e)="removeProperty($event)"></app-property>
+  </div>
+  <button type="button" (click)="addProperty()">Add Property</button>
+  <button type="submit" >Submit</button>
+</form>

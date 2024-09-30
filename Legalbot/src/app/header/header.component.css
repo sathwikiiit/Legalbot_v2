@@ -1,0 +1,24 @@
+img{
+    border-radius: 100%;
+    height: 60px;
+    padding: 10px;
+    display: inline;
+}
+a{
+    color: inherit;
+    text-decoration: inherit;
+}
+h1{
+    display: inline-block;
+    height: 40px;
+    padding: 20px;
+    width: 90%;
+    color: #cdd9f0;
+}
+.user{
+    display: inline-block;
+    height: 60px;
+    padding: 10px;
+    font-size: large;
+    color: white;
+}

@@ -1,0 +1,25 @@
+{
+    "suitForPartition": {
+        "title":"SUIT FOR PARTITION AND SEPERATE POSESSION",
+        "descriptionOfplaintiffs": "The address and description of the defendant is the same as shown in the cause title for the purpose of issue of all summons, notices, process etc.,.",
+        "descriptionOfDefendants": "The address for service of summons notices, process on the Plaintiff is the same as shown in the above cause title and also that of Their counsel V. MAHESHWAR Advocate, Sangareddy.",
+        "plaintRule": "PLAINT FILED UNDER ORDER VII RULE 1 & 2 R/W SEC. 26 OF C.P.C",
+        "declaration": "The plaintiff hereby declares that he was not filed any suit or proceeding before any court or authority except the present suit.",
+        "limitation": "That the suit is filed with in time.",
+        "Prayer": {
+            "header":"That the suit of the Plaintiffs be decreed in the following manner.",
+            "body":[
+                "The Hon’ble court may pleased to pass a preliminary decree in favour of the plaintiffs allotting ${1/4th share to the Plaintiffs and Defendant No. 3 each and 1/4th share to defendant No. 1 and 2 together} in the suit schedule property with metes & bounds.",
+                "And grant Injunction Order restraining the defendants from alienating the suit schedule property in favour of third parties consequentially.",
+                "A final decree may be passed accordingly in the terms of preliminary decree by appointing an Advocate commissioner for the said purpose.",
+                "#To declare the illegal ${sale deeds vide  doc. No. 260/1994, doc. No. 13652/2006, doc. No. 9241/2007, doc. No. 765/2017 and doc. No. 4388/2019} as null and void  and not binding on the plaintiffs",
+                "Costs of the suit may be awarded.",
+                "And grant any other relief or reliefs which deems fit and proper in the circumstances of the case may be awarded in the interest of Justice."
+            ]
+        }
+    },
+    "suitForDeclaration": "SUIT FOR DECLARATION AND RECOVERY OF POSESSION",
+    "suitForInjunction": "SUIT FOR PERPETUAL INJUNCTION",
+    "courtFee": "It is submitted that as per the valuation of Dharani Portal, the total value per Ac. 2,25,000/- and Suit schedule  property is of Ac. 9-32 gts.. the total value will comes to Rs.22,05,000/- and 1/4th  share of the each plaintiff will comes to Rs. 5,51,250/-. Thus total value of plaintiffs’ shares comes to Rs. 11,02,500 and 3/4th Value of the Plaintiffs’ share will comes to Rs. 8,26,875/-.  For the  purpose of both Territorial and pecuniary jurisdiction. And the Suit Schedule  Property is situated at Gunthapally Village, Kondapur Mandal, Sangareddy District. As such this Hon’ble court has got both Pecuniary and Territorial jurisdiction to entertain the suit and grant relief. ",
+    "Verification":"We, the above named plaintiffs do hereby declare that what are stated in the above paras of plaint  are true and correct to the best of our knowledge and belief and legal advice. Hence verified on this       day of June, 2023 at Sangareddy."
+}

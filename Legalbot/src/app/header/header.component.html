@@ -1,0 +1,6 @@
+<img src="icon.png">
+<h1><a [routerLink]="['/dashboard']">LegalBot</a></h1>
+<div *ngIf="disabled" class="user">
+    <p>{{fetcher.user}}</p>
+    <p>{{suits?.length}}</p>
+</div>

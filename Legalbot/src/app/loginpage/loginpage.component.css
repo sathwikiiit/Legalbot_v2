@@ -1,0 +1,38 @@
+form{
+    margin:10px auto;
+    width: 600px;
+    padding: 20px;
+}
+
+label, input {
+	display: block;
+	width: 100%;
+	text-align: left;
+}
+label {
+	color: #555;
+	font-weight: bold;
+	margin-top: 20px;
+	margin-bottom: 5px;
+}
+
+input[type=text],input[type=password] ,textarea {
+	padding: 10px;
+	box-sizing: border-box;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-bottom: 20px;
+}
+input[type=text]:focus,textarea:focus {
+	background-color: aquamarine;
+}
+
+button {
+	border: none;
+	padding: 15px;
+	border-radius: 5px;
+	color: white;
+	background-color: green;
+	width: 100%;
+}
+

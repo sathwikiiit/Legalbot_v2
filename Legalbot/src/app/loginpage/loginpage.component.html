@@ -1,0 +1,16 @@
+
+<form [@buttonState]="isLoading ? 'loading' : 'normal'" (ngSubmit)="Login($event)">
+    <h3>Enter your login credentials</h3>
+    <h3 style="color: red;" [hidden]="check">Please check credentials</h3>
+    <label for="first">
+        Username:
+    </label>
+    <input type="text" id="first" name="first" 
+    [(ngModel)]="Username" placeholder="Enter your Username" required>
+    <label for="password">
+        Password:
+    </label>
+    <input type="password" id="password" name="password" 
+    [(ngModel)]="password" placeholder="Enter your Password" required>       
+    <button type="submit">Login</button>
+</form>

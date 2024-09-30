@@ -1,0 +1,74 @@
+<div class="verification-container" #a>
+    <h1>Verification of Details</h1>
+  
+    <div class="verification-grid">
+      <div class="verification-item">
+        <h2>Court Name:</h2>
+        <p>{{ suit?.court }}</p>
+      </div>
+  
+      <div class="verification-item">
+        <h2>City:</h2>
+        <p>{{ suit?.city }}</p>
+      </div>
+  
+      <div class="verification-item">
+        <h2>Plaintiff No. 1:</h2>
+        <p>{{ suit?.plaintiff1 }}</p>
+      </div>
+  
+      <div class="verification-item">
+        <h2>Defendant No. 1:</h2>
+        <p>{{ suit?.defendant1 }}</p>
+      </div>
+  
+      <div class="verification-item">
+        <h2>Plaintiffs:</h2>
+        <ul>
+          <li *ngFor="let pf of suit?.plaintiffs?.split('\n')">{{ pf }}</li>
+        </ul>
+      </div>
+  
+      <div class="verification-item">
+        <h2>Defendants:</h2>
+        <ul>
+          <li *ngFor="let df of suit?.defendants?.split('\n')">{{ df }}</li>
+        </ul>
+      </div>
+  
+      <div class="verification-item">
+        <h2>Properties:</h2>
+        <ul>
+          <li *ngFor="let prop of suit?.property">
+            @if (prop.type=='Land') {
+              Sy.No. {{prop?.syn}} to an extent of Ac. {{prop.extent}} gts.
+            }
+            @else if (prop.type=='Plot') {
+              Plot No. {{prop.plotNo}} in Sy.No. {{prop?.syn}} to an extent of {{prop.extent}} sq.yards.
+            }
+            @else {
+              H.No. {{prop?.hn}} to an extent of {{prop.extent}} sq.yards.
+            }
+          </li>
+        </ul>
+      </div>
+    </div>
+</div>
+    
+    <div class="type">
+        <h2>Type of suit: <select><option>Suit for Partition</option><option>Suit for Injunction</option></select></h2>
+    </div>
+    <div class = "toinclude">
+        <input type="checkbox" id="notice" [(ngModel)]="items.notice">
+        <label for="notice">Notice</label>
+        <input type="checkbox" id="summons" [(ngModel)]="items.summons">
+        <label for="summons">Summons</label>
+        <input type="checkbox" id="Ver_aff" [(ngModel)]="items.ver_aff">
+        <label for="Ver_aff">Verification_Afdt</label>
+        <input type="checkbox" id="Add_Aff" [(ngModel)]="items.add_aff">
+        <label for="Add_Aff">Address_Afdt</label>
+        <input type="checkbox" id="suit" [(ngModel)]="items.suit">
+        <label for="Suit">Suit</label>
+    </div>
+    <button (click)="generate(a)">Generate</button>
+    <button [routerLink]="['/dashboard']">Back to Dashboard</button>

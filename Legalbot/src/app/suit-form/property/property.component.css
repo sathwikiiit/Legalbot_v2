@@ -1,0 +1,37 @@
+.Property,.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Create two equal-width columns */
+    margin-bottom: 20px;
+}
+
+label {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+input {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+h3{
+    text-align: center;
+    margin: 20px;
+    padding: 10px 20px;
+}
+button {
+    grid-column: 1 / span 2; /* Center the button across both columns */
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 20%;
+  }
+  
+  button:hover {
+    background-color: #0069d9;
+  }

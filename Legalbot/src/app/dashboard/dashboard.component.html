@@ -1,0 +1,31 @@
+<div class="bar">
+    <h1>List of Suits</h1>
+    <button (click)="clicked()">{{sym}}</button>
+  </div>
+  <div class="oframe" [hidden]="disabled">
+    <table class="suit-table">
+      <thead>
+        <tr>
+          <th>Suit Name</th>
+          <th>Type</th>
+          <th>Date</th>
+          <th>File</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let suit of suits">
+          <td>{{suit.plaintiff1 + " vs " + suit.defendant1}}</td>
+          <td>Docx</td>
+          <td>{{suit.date | date:'dd-MM-yyyy'}}</td>
+          <td><a [routerLink]="['/suit', suit.id]">File</a></td>
+        </tr>
+        <tr *ngIf="suits?.length === 0">
+          <td colspan="4">No suits added</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="button-container">
+      <button [routerLink]="['/newsuit']">New Suit</button>
+      <button>Miscellaneous</button>
+    </div>
+  </div>

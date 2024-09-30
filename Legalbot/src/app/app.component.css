@@ -1,0 +1,23 @@
+header{
+    position: fixed;
+    height: 80px;
+    top:0px;
+    display:flex;
+    flex-direction: row;
+    background-color: green;
+    width: 100%;
+}
+footer{
+    position: fixed;
+    height: 80px;
+    width: 100%;
+    bottom: 0px;
+    color: white;
+    background-color: black;
+}
+.main{
+    position: fixed;
+    top: 100px;
+    bottom: 100px;
+    width: 100%;
+}

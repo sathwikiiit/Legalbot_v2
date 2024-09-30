@@ -1,0 +1,56 @@
+<h3>Property {{id}}</h3>
+  <ng-container [ngSwitch]="property.get('type')?.value">
+    <div *ngSwitchCase="'Land'" class="Property" [formGroup]="property">
+      <label for="{{id}}.Propertytype">Property Type:</label>
+      <select id="{{id}}.Propertytype" formControlName="type">
+        <option>Land</option>
+        <option>Plot</option>
+        <option>House</option>
+      </select>    
+      <label for="{{id}}.syn">Sy.No.</label>
+      <input class="input" id="{{id}}.syn" formControlName="syn">
+      <label for="{{id}}.extent">Extent</label>
+      <input [ngStyle]="{'border-color': property.get('extent')?.valid && property.get('extent')?.touched ? 'red' : '#ccc'}" class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Ac.}-{gts.}">
+      <label for="{{id}}.value">Market Value</label>
+      <input class="input" id="{{id}}.value" formControlName="value">
+    </div>
+    <div *ngSwitchCase="'Plot'" class="Property" [formGroup]="property">
+      <label for="{{id}}.Propertytype">Property Type:</label>
+      <select id="{{id}}.Propertytype" formControlName="type">
+        <option>Land</option>
+        <option>Plot</option>
+        <option>House</option>
+      </select>    
+      <label for="{{id}}.syn">Sy.No.:</label>
+      <input class="input" id="{{id}}.syn" formControlName="syn">
+      <label for="{{id}}.plotNo">Plot.No.:</label>
+      <input class="input" id="{{id}}.plotNo" formControlName="plotNo">
+      <label for="{{id}}.extent">Extent</label>
+      <input class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Yards}">
+      <label for="{{id}}.value">Market Value</label>
+      <input class="input" id="{{id}}.value" formControlName="value">
+    </div>
+    <div *ngSwitchCase="'House'" class="Property" [formGroup]="property">
+      <label for="{{id}}.Propertytype">Property Type:</label>
+      <select id="{{id}}.Propertytype" formControlName="type">
+        <option>Land</option>
+        <option>Plot</option>
+        <option>House</option>
+      </select>    
+      <label for="{{id}}.hn">H.No.</label>
+      <input class="input" id="{{id}}.hn" formControlName="hn">
+      <label for="{{id}}.extent">Extent</label>
+      <input class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Yards}">
+      <label for="{{id}}.value">Market Value</label>
+      <input class="input" id="{{id}}.value" formControlName="value">
+    </div>
+    <div *ngSwitchDefault class="Property" [formGroup]="property">
+      <label for="{{id}}.Propertytype">Property Type:</label>
+      <select id="{{id}}.Propertytype" formControlName="type">
+        <option>Land</option>
+        <option>Plot</option>
+        <option>House</option>
+      </select>
+    </div>
+  </ng-container>
+  <button (click)="remove(id)">Remove</button>
