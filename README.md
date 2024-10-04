@@ -10,6 +10,7 @@ Legalbot_v2 is a legal automation project comprised of two main components: a Sp
   - Java Development Kit (JDK) 11 or later (https://www.oracle.com/java/technologies/javase/downloads/)
   - Maven (https://maven.apache.org/)
   - Node.js and npm (https://nodejs.org/)
+  - MySQL Workbench
 
 ## Installation
 1. Clone the repository:
