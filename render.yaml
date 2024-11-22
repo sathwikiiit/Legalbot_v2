@@ -9,9 +9,3 @@ services:
       - key: NODE_ENV
         value: development  # Set environment variable for development
         
-  - type: web
-    name: spring-boot-backend
-    env: java
-    buildCommand: mvn clean package  # Optional, if you want to package the app
-    startCommand: mvn spring-boot:run  # Start the Spring Boot application
-    autoDeploy: true
