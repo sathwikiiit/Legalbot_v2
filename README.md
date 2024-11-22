@@ -15,7 +15,7 @@ Legalbot_v2 is a legal automation project comprised of two main components: a Sp
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-username>/Legalbot_v2.git
+   git clone https://github.com/sathwikiiit/Legalbot_v2.git
    ```
 
 2. Navigate to the project directory:
