@@ -3,7 +3,6 @@ services:
     name: legalbot-frontend
     env: static
     buildCommand: npm install && npm run build --prod
-    publishDirectory: Legalbot # Adjust this path if necessary
     autoDeploy: true
     branch: main  # This can be removed if not using GitHub
 
