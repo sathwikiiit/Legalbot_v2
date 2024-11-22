@@ -1,15 +1,17 @@
 services:
   - type: web
     name: legalbot-frontend
-    env: static
-    buildCommand: npm install && npm run build --prod
+    env: node
+    buildCommand: npm install  # Install dependencies
+    startCommand: ng serve --host 0.0.0.0 --port 3000  # Start Angular in development mode
     autoDeploy: true
-    branch: main  # This can be removed if not using GitHub
-
+    envVars:
+      - key: NODE_ENV
+        value: development  # Set environment variable for development
+        
   - type: web
     name: spring-boot-backend
     env: java
-    buildCommand: mvn clean package
-    startCommand: java -jar Backend/target/your-spring-boot-app.jar  # Update with your actual JAR name
+    buildCommand: mvn clean package  # Optional, if you want to package the app
+    startCommand: mvn spring-boot:run  # Start the Spring Boot application
     autoDeploy: true
-    branch: main  # This can be removed if not using GitHub
