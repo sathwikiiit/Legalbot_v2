@@ -5,10 +5,7 @@ services:
     buildCommand: npm install && npm run build --prod
     publishDirectory: LegalBot/dist/LegalBot  # Adjust this path if necessary
     autoDeploy: true
-    branch: main
-    github:
-      repo: sathwikiiit/Legalbot_v2
-      path: /LegalBot  # Path to the Angular app directory
+    branch: main  # This can be removed if not using GitHub
 
   - type: web
     name: spring-boot-backend
@@ -16,7 +13,4 @@ services:
     buildCommand: mvn clean package
     startCommand: java -jar Backend/target/your-spring-boot-app.jar  # Update with your actual JAR name
     autoDeploy: true
-    branch: main
-    github:
-      repo: sathwikiiit/Legalbot_v2  # Same repo if both are in the same repository
-      path: /Backend  # Path to the Spring Boot app directory
+    branch: main  # This can be removed if not using GitHub
