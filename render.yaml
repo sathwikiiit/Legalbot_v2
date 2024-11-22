@@ -1,1 +1,22 @@
+services:
+  - type: web
+    name: angular-frontend
+    env: static
+    buildCommand: npm install && npm run build --prod
+    publishDirectory: dist/your-angular-app-name
+    autoDeploy: true
+    branch: main
+    github:
+      repo: sathwikiiit/Legalbot_v2
+      path: /LegalBot
 
+  - type: web
+    name: spring-boot-backend
+    env: java
+    buildCommand: mvn clean package
+    startCommand: java -jar target/your-spring-boot-app.jar
+    autoDeploy: true
+    branch: main
+    github:
+      repo: your-github-username/your-spring-boot-repo
+      path: /path/to/spring-boot-app
