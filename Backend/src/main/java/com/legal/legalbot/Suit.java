@@ -3,23 +3,44 @@ package com.legal.legalbot;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 
-
-@Document(collection = "suit")
+@Entity
 public class Suit {
     @Id
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @Column(name = "Court")
     protected String court;
 
+    @Column(name = "City")
     protected String city;
+
+    @Column(name = "created_by")
     protected String user;
+
+    @Column(name="Plaintiffs")
     protected String plaintiffs;
+
+    @Column(name="Defendants")
     protected String defendants;
+
+    @Column(name="Plaintiff1")
     protected String plaintiff1;
+
+    @Column(name="Defendant1")
     protected String defendant1;
+
+    @Column(name = "Date")
     protected Date date;
 
     public Date getDate() {
@@ -31,6 +52,9 @@ public class Suit {
         this.date = date;
     }
 
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "suit_id")
     private List<Property> property;
 
     public String details(){
