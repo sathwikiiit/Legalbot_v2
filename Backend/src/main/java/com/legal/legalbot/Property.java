@@ -1,18 +1,18 @@
 package com.legal.legalbot;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-
-@Document(collection="property")
+@Entity
 public class Property {
     @Id
     private Long id;
 
     private String type; // Property type (e.g., land, plot, house)
 
-    private String value; // Property value
+    private String mkvalue; // Property mkvalue
 
     private String extent; // Property extent (e.g., area, size)
     private String syn; // Survey Number (if applicable)
@@ -33,12 +33,12 @@ public class Property {
         this.type = type;
     }
 
-    public String getValue() {
-        return value;
+    public String getmkvalue() {
+        return mkvalue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setmkvalue(String mkvalue) {
+        this.mkvalue = mkvalue;
     }
 
     public String getExtent() {
