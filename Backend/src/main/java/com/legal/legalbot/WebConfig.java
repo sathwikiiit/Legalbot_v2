@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("*") // Allow for the specific "/auth" endpoint
             .allowedOrigins("http://localhost:4200", "https://legalbot-v2.vercel.app") // Corrected origins
-            .allowedMethods("GET", "POST") // Allow specific HTTP methods (adjust as needed)
+            .allowedMethods("GET", "POST","OPTIONS") // Allow specific HTTP methods (adjust as needed)
             .allowedHeaders("*"); // Allow all headers (adjust if necessary for security)
     }
 }
