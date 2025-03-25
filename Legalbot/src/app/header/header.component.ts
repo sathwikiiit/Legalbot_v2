@@ -4,11 +4,10 @@ import { FetcherService } from '../services/fetcher.service';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'header',
-  standalone: true,
-  imports: [CommonModule,RouterLink],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.css'
+    selector: 'header',
+    imports: [CommonModule, RouterLink],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit {
   @Input() disabled: Boolean=false;

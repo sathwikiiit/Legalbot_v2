@@ -6,23 +6,22 @@ import { LoginService } from '../services/login.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
-  selector: 'app-loginpage',
-  standalone: true,
-  imports: [CommonModule,FormsModule,RouterLink],
-  templateUrl: './loginpage.component.html',
-  styleUrl: './loginpage.component.css',
-  animations: [
-    trigger('buttonState', [
-      state('normal', style({
-        'opacity': '1',
-      })),
-      state('loading', style({
-        'opacity': '0.5',
-      })),
-      transition('normal => loading', animate('300ms ease-in')),
-      transition('loading => normal', animate('300ms ease-out'))
-    ])
-  ]
+    selector: 'app-loginpage',
+    imports: [CommonModule, FormsModule, RouterLink],
+    templateUrl: './loginpage.component.html',
+    styleUrl: './loginpage.component.css',
+    animations: [
+        trigger('buttonState', [
+            state('normal', style({
+                'opacity': '1',
+            })),
+            state('loading', style({
+                'opacity': '0.5',
+            })),
+            transition('normal => loading', animate('300ms ease-in')),
+            transition('loading => normal', animate('300ms ease-out'))
+        ])
+    ]
 })
 export class LoginpageComponent implements OnInit {
   Username: string="";

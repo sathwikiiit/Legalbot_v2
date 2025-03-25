@@ -15,11 +15,10 @@ import { PropertyComponent } from './property/property.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-suit-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, PropertyComponent,CommonModule],
-  templateUrl: './suit-form.component.html',
-  styleUrl: './suit-form.component.css',
+    selector: 'app-suit-form',
+    imports: [ReactiveFormsModule, FormsModule, PropertyComponent, CommonModule],
+    templateUrl: './suit-form.component.html',
+    styleUrl: './suit-form.component.css'
 })
 export class SuitFormComponent implements OnInit {
   @Input()

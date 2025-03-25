@@ -5,11 +5,10 @@ import { FetcherService } from '../services/fetcher.service';
 import { Suit } from '../suit';
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [RouterLink,CommonModule],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+    selector: 'app-dashboard',
+    imports: [RouterLink, CommonModule],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit{
   sym: string='\u{2B9E}';

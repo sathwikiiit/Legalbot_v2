@@ -3,11 +3,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-property',
-  standalone: true,
-  imports: [ReactiveFormsModule,FormsModule,CommonModule],
-  templateUrl: './property.component.html',
-  styleUrl: './property.component.css'
+    selector: 'app-property',
+    imports: [ReactiveFormsModule, FormsModule, CommonModule],
+    templateUrl: './property.component.html',
+    styleUrl: './property.component.css'
 })
 export class PropertyComponent{
   @Input() property!:FormGroup<{

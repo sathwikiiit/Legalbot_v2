@@ -7,11 +7,10 @@ import { FormsModule } from '@angular/forms';
 import { SuitGen } from '../dox/suit-gen';
 
 @Component({
-  selector: 'app-verification',
-  standalone: true,
-  imports: [RouterLink,CommonModule,FormsModule],
-  templateUrl: './verification.component.html',
-  styleUrl: './verification.component.css'
+    selector: 'app-verification',
+    imports: [RouterLink, CommonModule, FormsModule],
+    templateUrl: './verification.component.html',
+    styleUrl: './verification.component.css'
 })
 export class VerificationComponent implements OnInit{
   @Input()
