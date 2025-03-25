@@ -38,8 +38,7 @@
     ></textarea>
   </div>
   <div formArrayName="property">
-    <app-property *ngFor="let prop of formdata.controls.property.controls;let i =index" [property]="prop" [id]="i+1" (e)="removeProperty($event)"></app-property>
-  </div>
+    <app-property *ngFor="let prop of formdata.controls.property.controls;let i =index" [property]="prop" [id]="i+1" (e)="removeProperty($event)"></app-property>  </div>
   <button type="button" (click)="addProperty()">Add Property</button>
   <button type="submit" >Submit</button>
 </form>

@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 @Entity
 public class Property {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String type; // Property type (e.g., land, plot, house)

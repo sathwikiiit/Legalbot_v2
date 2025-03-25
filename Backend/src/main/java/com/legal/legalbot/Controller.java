@@ -24,6 +24,7 @@ public class Controller {
     @Autowired
     private Repos repo;
 
+
     @GetMapping("/")
     public List<Suit> suits(){
         return repo.findAll();
