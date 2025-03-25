@@ -7,7 +7,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 
 @Component({
     selector: 'app-loginpage',
-    imports: [CommonModule, FormsModule, RouterLink],
+    imports: [CommonModule, FormsModule],
     templateUrl: './loginpage.component.html',
     styleUrl: './loginpage.component.css',
     animations: [

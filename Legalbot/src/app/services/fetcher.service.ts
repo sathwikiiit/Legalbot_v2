@@ -12,7 +12,7 @@ export class FetcherService {
   private change=new BehaviorSubject<boolean>(false);
   change$=this.change.asObservable()
   constructor(private client:HttpClient) {
-    this.api_url="https://legalbot-v2-tnwt.onrender.com/"
+    this.api_url=""
   }
 
   public setuser(user:string) {
