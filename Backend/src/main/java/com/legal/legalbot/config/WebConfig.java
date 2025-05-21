@@ -1,6 +1,7 @@
-package com.legal.legalbot;
+package com.legal.legalbot.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -9,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("*") // Allow for the specific "/auth" endpoint
             .allowedOrigins("http://localhost:4200", "https://legalbot-v2.vercel.app") // Corrected origins
             .allowedMethods("GET", "POST","OPTIONS") // Allow specific HTTP methods (adjust as needed)
@@ -17,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/browser/", "classpath:/static/");
     }
