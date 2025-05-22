@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.legal.legalbot.model.Suit;
-import com.legal.legalbot.repository.Repos;
+import com.legal.legalbot.repository.SuitRepos;
 
     /**http://localhost:9090/: list of all suits | 
      * auth: Returns true if authenticated | 
@@ -25,7 +25,7 @@ import com.legal.legalbot.repository.Repos;
 @RestController
 public class Controller {
     @Autowired
-    private Repos repo;
+    private SuitRepos repo;
 
 
     @GetMapping("/")

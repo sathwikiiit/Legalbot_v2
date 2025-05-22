@@ -1,15 +1,6 @@
 package com.legal.legalbot.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
-@Entity
 public class Property {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-
     private String type; // Property type (e.g., land, plot, house)
 
     private String mkvalue; // Property mkvalue
@@ -20,10 +11,6 @@ public class Property {
     private String hn; // House number
 
     private String plotNo; // Plot number
-
-    public Long getId() {
-        return id;
-    }
 
     public String getType() {
         return type;

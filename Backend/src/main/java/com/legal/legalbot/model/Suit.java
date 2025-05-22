@@ -1,7 +1,11 @@
 package com.legal.legalbot.model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,6 +54,12 @@ public class Suit {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "suit_id")
     private List<Property> property;
+
+    private String suitType;
+
+    private String relief;
+
+    private String affiantIndex;
 
     public String details(){
         return getPlaintiff1()+" vs "+getDefendant1();
@@ -126,5 +136,74 @@ public class Suit {
     public void setProperty(List<Property> property) {
         this.property = property;
     }
+
+    public Map<String, Object> toSuitMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("pfs", plaintiffs);
+        map.put("dfs", defendants);
+        map.put("court", court);
+        map.put("city", city);
+        map.put("suit_type", suitType);
+        map.put("relief", relief);
+        map.put("affiant_index",affiantIndex);
+        return map;
+    }
+        /**
+     * Returns a map from each guardian Party to the set of plaintiffs they are guarding.
+     */
+    public Map<Party, Set<Party>> getGuardiansToPlaintiffsMap() {
+        Map<Party, Set<Party>> guardianMap = new HashMap<>();
+
+        if (plaintiffs == null) {
+            return guardianMap;
+        }
+
+        for (int i = 0; i < plaintiffs.length; i++) {
+            Party plaintiff = plaintiffs[i];
+            int guardianIdx = plaintiff.getGuardianIndex();
+            if (guardianIdx >= 0 && guardianIdx < plaintiffs.length) {
+                Party guardian = plaintiffs[guardianIdx];
+                guardianMap.computeIfAbsent(guardian, __ -> new HashSet<>()).add(plaintiff);
+            }
+        }
+
+        return guardianMap;
+    }
+
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+
+        public String getSuitType() {
+            return suitType;
+        }
+
+
+        public void setSuitType(String suitType) {
+            this.suitType = suitType;
+        }
+
+
+        public String getRelief() {
+            return relief;
+        }
+
+
+        public void setRelief(String relief) {
+            this.relief = relief;
+        }
+
+
+        public String getAffiantIndex() {
+            return affiantIndex;
+        }
+
+
+        public void setAffiantIndex(String affiantIndex) {
+            this.affiantIndex = affiantIndex;
+        }
+
 
 }

@@ -1,6 +1,7 @@
 package com.legal.legalbot.model;
 
 public class Party {
+
     private String name;
     private String relation;
     private String gender;
