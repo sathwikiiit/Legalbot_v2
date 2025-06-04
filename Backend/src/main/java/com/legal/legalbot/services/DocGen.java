@@ -1,14 +1,16 @@
 package com.legal.legalbot.services;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
 
-import org.springframework.stereotype.Service;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 
 import com.legal.legalbot.model.Party;
 import com.legal.legalbot.model.Suit;
 
-@Service
 public class DocGen {
     private Suit currentSuit;
     private DocWriter docWriter;
@@ -16,10 +18,18 @@ public class DocGen {
     public DocGen(Suit suit) throws Exception {
         currentSuit = suit;
         docWriter = new DocWriter();
-        templates = loadTemplates("template.xml");
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("static/template.xml")) {
+            if (is == null) {
+                throw new IOException("template.xml not found in resources/static/");
+            }
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            templates = dBuilder.parse(is);
+            templates.getDocumentElement().normalize();
+        }
     }
     
-    public void generateDoc(ArrayList<String> required_docs, Suit suit){
+    public void generateDoc(ArrayList<String> required_docs, Suit suit, String filePath) throws IOException{
 
         if (required_docs.contains("Notice")){
             addShowCauseNotice();
@@ -36,24 +46,21 @@ public class DocGen {
         if (required_docs.contains("Minor Affidavit")){
             addMinorAffidavit();
         }
+        docWriter.generateDocument(filePath);
     }
 
     private void addAddressAffidavit() {
-        addCauseTitle();
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAddressAffidavit'");
+        Map<String, Object> addressAffidavitData = currentSuit.toSuitMap(); 
+        TemplateProcessor.processTemplate(templates, "address_affidavit", addressAffidavitData, docWriter);
     }
 
     private void addMinorAffidavit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addMinorAffidavit'");
+        Map<String, Object> minorAffidavitData = currentSuit.toSuitMap(); 
+        TemplateProcessor.processTemplate(templates, "minor_affidavit", minorAffidavitData, docWriter);
     }
 
-    private void addCauseTitle() {
-        this.currentSuit.getDate();
-    }
-        public void addCauseTitle(boolean isLong, boolean isIA) {
-        java.util.Map<String, Object> causeTitleData = currentSuit.toSuitMap(); // Use fully qualified name
+    public void addCauseTitle(boolean isLong, boolean isIA) {
+        java.util.Map<String, Object> causeTitleData = currentSuit.toSuitMap(); 
         String templateName = isLong ? "longCausetitle" : "shortCausetitle";
         TemplateProcessor.processTemplate(templates, templateName, causeTitleData, docWriter);
     }
@@ -62,7 +69,7 @@ public class DocGen {
         Party[] defendants = currentSuit.getDefendants();
         if (defendants != null) {
             for (Party defendant : defendants) {
-                java.util.Map<String, Object> noticeData = currentSuit.toSuitMap();  // Use fully qualified name
+                java.util.Map<String, Object> noticeData = currentSuit.toSuitMap();  
                 noticeData.put("defendant_name", defendant.toString());
                 TemplateProcessor.processTemplate(templates, "show_cause_notice", noticeData, docWriter);
             }
@@ -70,7 +77,7 @@ public class DocGen {
     }
 
     public void addVerificationAffidavit() {
-        java.util.Map<String, Object> dataMap = currentSuit.toSuitMap(); // Use fully qualified name
+        java.util.Map<String, Object> dataMap = currentSuit.toSuitMap(); 
         TemplateProcessor.processTemplate(templates, "verification_affidavit", dataMap, docWriter);
     }
 
@@ -78,22 +85,10 @@ public class DocGen {
         Party[] defendants = currentSuit.getDefendants();
         if (defendants != null) {
             for (Party defendant : defendants) {
-               java.util.Map<String, Object> summonsData = currentSuit.toSuitMap(); // Use fully qualified name
+               java.util.Map<String, Object> summonsData = currentSuit.toSuitMap(); 
                 summonsData.put("defendant_name", defendant.toString());
                 TemplateProcessor.processTemplate(templates, "summons", summonsData, docWriter);
             }
         }
-    }
-
-    public void generateDocument(String filePath) throws IOException {
-        docWriter.generateDocument(filePath);
-    }
-
-    private org.w3c.dom.Document loadTemplates(String filePath) throws Exception { // Use fully qualified name
-        javax.xml.parsers.DocumentBuilderFactory dbFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance(); // Use fully qualified name
-        javax.xml.parsers.DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();  // Use fully qualified name
-        org.w3c.dom.Document doc = dBuilder.parse(new java.io.File(filePath));  // Use fully qualified name
-        doc.getDocumentElement().normalize();
-        return doc;
     }
 }
