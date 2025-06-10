@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,27 +20,23 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Suit {
     @Id
-    @Column(name="id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
-
-    @Column(name = "Court")
-    protected String court;
-
-    @Column(name = "City")
-    protected String city;
-
-    @Column(name = "created_by")
-    protected String user;
-
-    @Column(name="Plaintiffs")
-    protected Party[] plaintiffs;
-
-    @Column(name="Defendants")
-    protected Party[] defendants;
-
-    @Column(name = "Date")
-    protected Date date;
+    private Long id;
+    private String court;
+    private String city;
+    private String lawyer;
+    @JoinColumn(name = "suit_id")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "suit-plaintiffs")
+    private List<Party> plaintiffs;
+    @JoinColumn(name = "suit_id")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "suit-defendants")
+    private List<Party> defendants;
+    private Date date;
+    public Suit() {
+        // Default constructor
+    }
 
     public Date getDate() {
         return date;
@@ -53,6 +50,7 @@ public class Suit {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "suit_id")
+    @JsonManagedReference(value = "suit-property")
     private List<Property> property;
 
     private String suitType;
@@ -66,7 +64,7 @@ public class Suit {
     }
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -90,42 +88,42 @@ public class Suit {
     }
 
 
-    public String getUser() {
-        return user;
+    public String getLawyer() {
+        return lawyer;
     }
 
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setLawyer(String lawyer) {
+        this.lawyer = lawyer;
     }
 
 
-    public Party[] getPlaintiffs() {
+    public List<Party> getPlaintiffs() {
         return plaintiffs;
     }
 
 
-    public void setPlaintiffs(Party[] plaintiffs) {
+    public void setPlaintiffs(List<Party> plaintiffs) {
         this.plaintiffs = plaintiffs;
     }
 
 
-    public Party[] getDefendants() {
+    public List<Party> getDefendants() {
         return defendants;
     }
 
 
-    public void setDefendants(Party[] defendants) {
+    public void setDefendants(List<Party> defendants) {
         this.defendants = defendants;
     }
 
 
     public String getPlaintiff1() {
-        return this.plaintiffs[0].getName();
+        return this.plaintiffs.get(0).getName();
     }
 
     public String getDefendant1() {
-        return this.defendants[0].getName();
+        return this.defendants.get(0).getName();
     }
 
     public List<Property> getProperty() {
@@ -158,11 +156,11 @@ public class Suit {
             return guardianMap;
         }
 
-        for (int i = 0; i < plaintiffs.length; i++) {
-            Party plaintiff = plaintiffs[i];
+        for (int i = 0; i < plaintiffs.size(); i++) {
+            Party plaintiff = plaintiffs.get(i);
             int guardianIdx = plaintiff.getGuardianIndex();
-            if (guardianIdx >= 0 && guardianIdx < plaintiffs.length) {
-                Party guardian = plaintiffs[guardianIdx];
+            if (guardianIdx >= 0 && guardianIdx < plaintiffs.size()) {
+                Party guardian = plaintiffs.get(guardianIdx);
                 guardianMap.computeIfAbsent(guardian, __ -> new HashSet<>()).add(plaintiff);
             }
         }
@@ -171,7 +169,7 @@ public class Suit {
     }
 
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
 

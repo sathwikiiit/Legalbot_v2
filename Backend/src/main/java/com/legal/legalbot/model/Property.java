@@ -1,9 +1,11 @@
 package com.legal.legalbot.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Property {
@@ -20,6 +22,23 @@ public class Property {
     private String hn; // House number
 
     private String plotNo; // Plot number
+
+    @ManyToOne
+    @JsonBackReference(value = "suit-property")
+    private Suit suit;
+
+    public Property() {
+        // Default constructor
+    }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 
     public String getType() {
         return type;
@@ -67,6 +86,14 @@ public class Property {
 
     public void setPlotNo(String plotNo) {
         this.plotNo = plotNo;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public void setSuit(Suit suit) {
+        this.suit = suit;
     }
 
     // Constructors, getters, setters, and other methods as needed

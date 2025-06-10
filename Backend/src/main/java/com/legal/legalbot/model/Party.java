@@ -1,9 +1,11 @@
 package com.legal.legalbot.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Party {
@@ -11,6 +13,13 @@ public class Party {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Unique identifier for the party
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
     private String name;
     private String relation;
     private String gender;
@@ -19,6 +28,15 @@ public class Party {
     private String address;
     private String partyType; // "plaintiff" or "defendant"
     private int guardianIndex;
+
+    @ManyToOne
+    @JsonBackReference(value = "suit-plaintiffs")
+    private Suit suit;
+
+    // Default constructor
+    public Party() {
+        this.guardianIndex = 0; // Default value for guardianIndex
+    }
 
     public Party(String name, String relation, String gender, int age, String occupation, String address, String partyType) {
         this.name = name;
@@ -96,6 +114,14 @@ public class Party {
 
     public void setPartyType(String partyType) {
         this.partyType = partyType;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public void setSuit(Suit suit) {
+        this.suit = suit;
     }
 
     @Override

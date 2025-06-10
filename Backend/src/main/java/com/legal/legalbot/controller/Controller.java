@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.legal.legalbot.model.Suit;
-import com.legal.legalbot.repository.SuitRepos;
+import com.legal.legalbot.dto.GenerateRequest;
+import com.legal.legalbot.dto.SuitDto;
 import com.legal.legalbot.services.SuitService;
 
     /**http://localhost:9090/: list of all suits | 
@@ -31,12 +31,10 @@ import com.legal.legalbot.services.SuitService;
     
 @RestController
 public class Controller {
-    private final SuitRepos repo;
     private final SuitService suitService;
 
     @Autowired
-    public Controller(SuitRepos repo, SuitService suitService) {
-        this.repo = repo;
+    public Controller(SuitService suitService) {
         this.suitService = suitService;
     }
 
@@ -46,24 +44,24 @@ public class Controller {
     }
 
     @PostMapping("/insert")
-    public boolean update(@RequestBody Suit suit){
-        suit.setDate(new Date());
-        suitService.saveSuit(suit);
+    public boolean update(@RequestBody SuitDto suitDto){
+        suitDto.setDate(new Date());
+        suitService.saveSuit(suitDto);
         return true;
     } 
 
     @GetMapping("/user")
-    public List<Suit> home(@RequestParam(required = true,name = "user") String name){
-        return repo.findByUser(name);
+    public List<SuitDto> home(@RequestParam(required = true,name = "lawyer") String name){
+        return suitService.getSuitsByLawyer(name);
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<Resource> generate(@RequestBody Suit suit) throws Exception {
-        String fileName = "generated_doc_" + suit.getId() + ".docx";
+    public ResponseEntity<Resource> generate(@RequestBody GenerateRequest request) throws Exception {
+        String fileName = "generated_doc_" + request.getSuitDto().getId() + ".docx";
         String filePath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
         suitService.generateDoc(
-            new ArrayList<>(List.of("Notice", "Summons", "Verification Affidavit", "Address Affidavit")),
-            suit,
+            new ArrayList<>(request.getDocuments()),
+            request.getSuitDto(),
             filePath
         );
         FileSystemResource resource = new FileSystemResource(filePath);
@@ -73,25 +71,32 @@ public class Controller {
                 .body(resource);
     }
     @GetMapping("/suits")
-    public List<Suit> getAllSuits() {
+    public List<SuitDto> getAllSuits() {
         return suitService.getAllSuits();
     }
     @GetMapping("/suitByPlaintiff")
-    public Suit getSuitByPlaintiff(@RequestParam String plaintiff) {
+    public SuitDto getSuitByPlaintiff(@RequestParam String plaintiff) {
         return suitService.getSuitByPlaintiff(plaintiff);
     }
-    @PostMapping("/delete")
-    public boolean deleteSuit(@RequestBody Suit suit) {
-        suitService.deleteSuit(suit.getId());
+    @PostMapping(value = "/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public boolean deleteSuit(@RequestBody SuitDto suitDto) {
+        suitService.deleteSuit(suitDto.getId());
         return true;
     }
     @PostMapping("/save")
-    public boolean saveSuit(@RequestBody Suit suit) {
-        suitService.saveSuit(suit);
-        return true;
+    public boolean saveSuit(@RequestBody SuitDto suitDto) {
+        try{
+            suitDto.setDate(new Date());
+            suitService.saveSuit(suitDto);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error saving suit: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
     @GetMapping("/suitById")
-    public Suit getSuitById(@RequestParam String id) {
+    public SuitDto getSuitById(@RequestParam Long id) {
         return suitService.getSuitById(id);
     }
 }

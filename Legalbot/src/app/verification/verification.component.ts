@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Suit } from '../suit';
+import { Suit, SuitDto } from '../suit';
 import { FetcherService } from '../services/fetcher.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -15,25 +15,29 @@ import { HttpClient } from '@angular/common/http';
 export class VerificationComponent implements OnInit{
   @Input()
   id!: number;
-  suit: Suit|undefined;
+  suit: SuitDto|undefined;
   items: any;
   constructor(private fetcher:FetcherService, private http: HttpClient){}
   ngOnInit(): void {
-    this.fetcher.fetchsuitbyid(this.id).subscribe((val: Suit)=>{this.suit=val})
+    this.fetcher.fetchsuitbyid(this.id).subscribe((val: SuitDto)=>{this.suit=val})
     this.items={notice:false,ver_aff:false,summons:false,add_aff:false,suit:false}
   }
   generate() {
     if (!this.suit) return;
     // Collect selected docs
-    const required_docs = [];
+    const required_docs: string[] = [];
     if (this.items.notice) required_docs.push('Notice');
     if (this.items.summons) required_docs.push('Summons');
     if (this.items.ver_aff) required_docs.push('Verification Affidavit');
     if (this.items.add_aff) required_docs.push('Address Affidavit');
     // POST to backend /generate and trigger download
+    const payload = {
+      suitDto: this.suit,
+      documents: required_docs
+    };
     this.http.post(
       '/generate',
-      this.suit,
+      payload,
       { responseType: 'blob' }
     ).subscribe((blob: Blob) => {
       // Use browser download
@@ -46,6 +50,13 @@ export class VerificationComponent implements OnInit{
       a.remove();
       window.URL.revokeObjectURL(url);
     });
+  }
+  getPlaintiffs() {
+    return this.suit?.plaintiffs || [];
+  }
+
+  getDefendants() {
+    return this.suit?.defendants || [];
   }
 
 }

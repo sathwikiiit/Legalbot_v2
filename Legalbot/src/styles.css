@@ -56,3 +56,95 @@ tbody tr:hover {
     background: #014055;
 }
 
+/* === Global Button Styles === */
+button, .primary-btn, .secondary-btn {
+  font-family: inherit;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  padding: 10px 24px;
+  margin: 4px 0;
+}
+.primary-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #1a3d1a;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(60, 120, 60, 0.08);
+}
+.primary-btn:hover {
+  background: #1a3d1a;
+  color: #fff;
+}
+.secondary-btn {
+  background: #e0e0e0;
+  color: #333;
+  font-weight: 500;
+}
+.secondary-btn:hover {
+  background: #bdbdbd;
+  color: #1a3d1a;
+}
+
+/* === Table Styles (override component) === */
+.suit-table, .verification-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 98%;
+  margin: 0 auto 24px auto;
+  font-size: 1rem;
+  background: #f8fafb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(60, 120, 60, 0.04);
+}
+.suit-table th, .suit-table td, .verification-table th, .verification-table td {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 14px 12px;
+  text-align: left;
+}
+.suit-table th, .verification-table th {
+  background: #1a3d1a;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.suit-table tr:last-child td, .verification-table tr:last-child td {
+  border-bottom: none;
+}
+.suit-table tr:nth-child(even), .verification-table tr:nth-child(even) {
+  background: #e8f5e9;
+}
+.suit-table tr:hover, .verification-table tr:hover {
+  background: #d0f8ce;
+}
+
+/* === Utility Classes === */
+.no-suits {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  background: #f9fbe7;
+}
+.file-link {
+  color: #1976d2;
+  text-decoration: underline;
+  font-weight: 500;
+}
+.file-link:hover {
+  color: #004ba0;
+}
+
+/* === Responsive === */
+@media (max-width: 700px) {
+  .primary-btn, .secondary-btn {
+    width: 100%;
+    padding: 12px 0;
+  }
+  .suit-table th, .suit-table td, .verification-table th, .verification-table td {
+    padding: 8px 4px;
+    font-size: 0.95rem;
+  }
+}
+

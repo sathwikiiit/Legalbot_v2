@@ -1,7 +1,7 @@
-import { HttpClient} from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Suit } from '../suit';
+import { Suit, SuitDto } from '../suit';
 
 @Injectable({
   providedIn: 'root'
@@ -28,15 +28,15 @@ export class FetcherService {
   }
 
   public fetchsuits():Observable<any> {
-    return this.client.get(this.api_url);
+    return this.client.get(this.api_url+"suits");
   }
   
   public fetchsuitsbyuser(user:string):Observable<any> {
     return this.client.get<Suit[]>(this.api_url+"user?name="+user);
   }
   
-  public fetchsuitbyid(id:number):Observable<Suit>{
-    return this.client.get<any>(this.api_url+"suit?id="+id);
+  public fetchsuitbyid(id:number):Observable<SuitDto>{
+    return this.client.get<any>(this.api_url+"suitById?id="+id);
   }
   
   getchange(){
@@ -45,5 +45,17 @@ export class FetcherService {
   
   changed() {
     this.change.next(!this.change.getValue())
+  }
+
+  submitSuit(suit: any): Observable<any> {
+    return this.client.post(
+      this.api_url+'save',
+      suit,
+      { headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
   }
 }

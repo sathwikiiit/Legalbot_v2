@@ -20,4 +20,6 @@ footer{
     top: 100px;
     bottom: 100px;
     width: 100%;
+    overflow-y: auto;
+    padding: 20px;
 }

@@ -1,9 +1,11 @@
 package com.legal.legalbot.services;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.legal.legalbot.dto.SuitDto;
 import com.legal.legalbot.model.Suit;
 import com.legal.legalbot.repository.SuitRepos;
 
@@ -16,29 +18,43 @@ public class SuitService {
     public SuitService(SuitRepos suitRepos) {
         this.suitRepos = suitRepos;
     }
-    public void generateDoc(ArrayList<String> required_docs, Suit suit, String filePath) throws Exception{
+    public void generateDoc(ArrayList<String> required_docs, SuitDto suitDto, String filePath) throws Exception{
+        Suit suit = SuitDto.toEntity(suitDto);
         gen = new DocGen(suit);
         gen.generateDoc(required_docs, suit, filePath);
     }
-    public void saveSuit(Suit suit) {
+    public void saveSuit(SuitDto suitDto) {
+        Suit suit = SuitDto.toEntity(suitDto);
         suitRepos.save(suit);
     }
-    public Suit getSuitById(String id) {
-        return suitRepos.findById(id).orElse(null);
+    public SuitDto getSuitById(Long id) {
+        Suit suit = suitRepos.findById(id).orElse(null);
+        return SuitDto.fromEntity(suit);
     }
-    public ArrayList<Suit> getSuitsByUser(String user) {
-        return (ArrayList<Suit>) suitRepos.findByUser(user);
+    public ArrayList<SuitDto> getSuitsByLawyer(String lawyer) {
+        List<Suit> suits = suitRepos.findByLawyer(lawyer);
+        ArrayList<SuitDto> dtos = new ArrayList<>();
+        for (Suit suit : suits) {
+            dtos.add(SuitDto.fromEntity(suit));
+        }
+        return dtos;
     }
-    public Suit getSuitByPlaintiff(String plaintiff) {
-        return suitRepos.findAll().stream()
-            .filter(suit -> suit.getPlaintiff1().equals(plaintiff))
+    public SuitDto getSuitByPlaintiff(String plaintiff) {
+        Suit suit = suitRepos.findAll().stream()
+            .filter(s -> s.getPlaintiff1().equals(plaintiff))
             .findFirst()
             .orElse(null);
+        return SuitDto.fromEntity(suit);
     }
     public void deleteSuit(long id) {
         suitRepos.deleteById(id);
     }
-    public ArrayList<Suit> getAllSuits() {
-        return (ArrayList<Suit>) suitRepos.findAll();
+    public ArrayList<SuitDto> getAllSuits() {
+        List<Suit> suits = suitRepos.findAll();
+        ArrayList<SuitDto> dtos = new ArrayList<>();
+        for (Suit suit : suits) {
+            dtos.add(SuitDto.fromEntity(suit));
+        }
+        return dtos;
     }
 }

@@ -1,47 +1,152 @@
+/* Modernized Suit Form Styles */
 form {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow-y: auto; /* Enable vertical scrolling for the entire form */
-    height: 450px;
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 32px 24px 24px 24px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(60, 120, 60, 0.08);
+  overflow-y: scroll;
+}
+.type, .parties, [formArrayName="property"] {
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f8fafb;
+}
+.type label, .parties label {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+  color: #1a3d1a;
+}
+input, textarea, select {
+  width: 100%;
+  margin-bottom: 0.7rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 4px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+  background: #fff;
+  transition: border 0.2s;
+}
+input:focus, textarea:focus, select:focus {
+  border: 1.5px solid #43e97b;
+  outline: none;
+}
+.party-block {
+  margin-bottom: 1.5rem;
+  padding: 1.2rem 1rem 1rem 1rem;
+  border: 1px solid #d0f8ce;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(60, 120, 60, 0.04);
+}
+.party-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+.party-row label {
+  min-width: 110px;
+  display: inline-block;
+  font-weight: 500;
+}
+.party-row input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 120px;
+}
+.party-row select {
+  width: 100%;
+  min-width: 0;
+  max-width: 180px;
+  padding: 0.3rem;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+}
+.add-btn, .remove-btn {
+  background: #43e97b;
+  color: #1a3d1a;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.add-btn:hover {
+  background: #1a3d1a;
+  color: #fff;
+}
+.remove-btn {
+  background: #e57373;
+  color: #fff;
+  margin-left: 0;
+}
+.remove-btn:hover {
+  background: #b71c1c;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+.submit-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #1a3d1a;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 36px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(60, 120, 60, 0.08);
+  transition: background 0.2s, color 0.2s;
+}
+.submit-btn:hover {
+  background: #1a3d1a;
+  color: #fff;
+}
+.error {
+  color: #c62828;
+  font-size: 0.97em;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.parties > div[formArrayName] {
+  margin-bottom: 1.5em;
+  padding: 0.5em;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: #f8fafb;
+}
+@media (max-width: 700px) {
+  form {
+    padding: 10px 2vw;
   }
-  
-  .type, .parties, .Property {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Create two equal-width columns */
-    margin-bottom: 20px;
+  .type, .parties, [formArrayName="property"] {
+    padding: 0.7rem;
   }
-  
-  label {
-    display: inline-block;
-    margin-right: 10px;
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  input, textarea, select {
-    display: inline-block;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+  .submit-btn {
+    width: 100%;
+    padding: 12px 0;
   }
-  
-  textarea {
-    height: 100px;
+  .party-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
   }
-  
-  button {
-    grid-column: 1 / span 2; /* Center the button across both columns */
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
+  .party-row label, .party-row input, .party-row select {
+    max-width: 100%;
   }
-  
-  button:hover {
-    background-color: #0069d9;
-  }
+}

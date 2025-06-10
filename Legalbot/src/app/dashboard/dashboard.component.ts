@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FetcherService } from '../services/fetcher.service';
-import { Suit } from '../suit';
+import { SuitDto } from '../suit';
 
 @Component({
     selector: 'app-dashboard',
@@ -13,7 +13,7 @@ import { Suit } from '../suit';
 export class DashboardComponent implements OnInit{
   sym: string='\u{2B9E}';
   disabled:boolean=true;
-  suits!: Suit[];
+  suits!: SuitDto[];
   constructor(private fetcher:FetcherService){
     this.fetcher.change$.subscribe({
       next: (val)=>{

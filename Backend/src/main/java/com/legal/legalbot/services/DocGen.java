@@ -2,6 +2,7 @@ package com.legal.legalbot.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -66,7 +67,7 @@ public class DocGen {
     }
 
     public void addShowCauseNotice() {
-        Party[] defendants = currentSuit.getDefendants();
+        List<Party> defendants = currentSuit.getDefendants();
         if (defendants != null) {
             for (Party defendant : defendants) {
                 java.util.Map<String, Object> noticeData = currentSuit.toSuitMap();  
@@ -82,7 +83,7 @@ public class DocGen {
     }
 
     public void addSummons() {
-        Party[] defendants = currentSuit.getDefendants();
+        List<Party> defendants = currentSuit.getDefendants();
         if (defendants != null) {
             for (Party defendant : defendants) {
                java.util.Map<String, Object> summonsData = currentSuit.toSuitMap(); 

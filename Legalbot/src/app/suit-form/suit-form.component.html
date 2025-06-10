@@ -1,44 +1,138 @@
 <form (ngSubmit)="submited()" [formGroup]="formdata">
   <div class="type">
-    <label for="suitType">Type of Suit: </label>
+    <label for="suitType">Type of Suit</label>
     <select id="suitType" formControlName="suitType">
-      <option>Suit For Partition</option>
-      <option>Suit For Declaration & Injunction</option>
-      <option>Suit For Declaration & Recovery of posession</option>
-      <option>Suit For Injunction</option>
-      <option>Suit For Recovery of Amount</option>
+      <option value="">Select Type</option>
+      <option value="partition">Suit For Partition</option>
+      <option value="declaration_injunction">Suit For Declaration & Injunction</option>
+      <option value="declaration_recovery">Suit For Declaration & Recovery of possession</option>
+      <option value="injunction">Suit For Injunction</option>
+      <option value="recovery_amount">Suit For Recovery of Amount</option>
     </select>
-    <label for="Court">Court Name</label>
-    <input type="text" id="Court" formControlName="court" />
-    <label for="City">City</label>
-    <input type="text" id="City" formControlName="city" />
+    <div class="error" *ngIf="formdata.get('suitType')?.invalid && formdata.get('suitType')?.touched">Type is required</div>
+
+    <label for="court">Court Name</label>
+    <input type="text" id="court" formControlName="court" placeholder="Enter court name" />
+    <div class="error" *ngIf="formdata.get('court')?.invalid && formdata.get('court')?.touched">Court is required</div>
+
+    <label for="city">City</label>
+    <input type="text" id="city" formControlName="city" placeholder="Enter city" />
+    <div class="error" *ngIf="formdata.get('city')?.invalid && formdata.get('city')?.touched">City is required</div>
+
     <label for="counselDetails">Counsel</label>
-    <textarea
-      type="text"
-      id="counselDetails"
-      formControlName="counselDetails"
-    ></textarea>
+    <textarea id="counselDetails" formControlName="counselDetails" placeholder="Counsel details"></textarea>
   </div>
+
   <div class="parties">
-    <label for="plaintiff1">Plaintiff No. 1</label>
-    <input type="text" id="plaintiff1" formControlName="plaintiff1" />
-    <label for="defendant1">Defendant No. 1</label>
-    <input type="text" id="defendant1" formControlName="defendant1" />
-    <label for="plaintiffs">Plaintiffs</label>
-    <textarea
-      type="text"
-      id="plaintiffs"
-      formControlName="plaintiffs"
-    ></textarea>
-    <label for="defendants">Defendants</label>
-    <textarea
-      type="text"
-      id="defendants"
-      formControlName="defendants"
-    ></textarea>
+    <h3>Plaintiffs</h3>
+    <div formArrayName="plaintiffs">
+      <div *ngFor="let plaintiff of plaintiffs.controls; let i = index" [formGroupName]="i" class="party-block">
+        <div class="party-row">
+          <label>Name</label>
+          <input type="text" formControlName="name" placeholder="Name" />
+          <div class="error" *ngIf="plaintiff.get('name')?.invalid && plaintiff.get('name')?.touched">Required</div>
+        </div>
+        <div class="party-row">
+          <label>Address</label>
+          <input type="text" formControlName="address" placeholder="Address" />
+        </div>
+        <div class="party-row">
+          <label>Age</label>
+          <input type="number" formControlName="age" placeholder="Age" min="0" max="120" />
+        </div>
+        <div class="party-row">
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="party-row">
+          <label>Occupation</label>
+          <input type="text" formControlName="occupation" placeholder="Occupation" />
+        </div>
+        <div class="party-row">
+          <label>Relation</label>
+          <input type="text" formControlName="relation" placeholder="Relation" />
+        </div>
+        <div class="party-row">
+          <label>Party Type</label>
+          <select formControlName="partyType">
+            <option value="">Select Type</option>
+            <option value="Plaintiff">Plaintiff</option>
+            <option value="Defendant">Defendant</option>
+          </select>
+        </div>
+        <div class="party-row">
+          <label>Guardian Index</label>
+          <input type="number" formControlName="guardianIndex" placeholder="Guardian Index" />
+        </div>
+        <button type="button" (click)="removePlaintiff(i)" [disabled]="plaintiffs.length === 1" class="remove-btn">Remove</button>
+      </div>
+      <button type="button" (click)="addPlaintiff()" class="add-btn">Add Plaintiff</button>
+    </div>
+
+    <h3>Defendants</h3>
+    <div formArrayName="defendants">
+      <div *ngFor="let defendant of defendants.controls; let i = index" [formGroupName]="i" class="party-block">
+        <div class="party-row">
+          <label>Name</label>
+          <input type="text" formControlName="name" placeholder="Name" />
+          <div class="error" *ngIf="defendant.get('name')?.invalid && defendant.get('name')?.touched">Required</div>
+        </div>
+        <div class="party-row">
+          <label>Address</label>
+          <input type="text" formControlName="address" placeholder="Address" />
+        </div>
+        <div class="party-row">
+          <label>Age</label>
+          <input type="number" formControlName="age" placeholder="Age" min="0" max="120" />
+        </div>
+        <div class="party-row">
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="party-row">
+          <label>Occupation</label>
+          <input type="text" formControlName="occupation" placeholder="Occupation" />
+        </div>
+        <div class="party-row">
+          <label>Relation</label>
+          <input type="text" formControlName="relation" placeholder="Relation" />
+        </div>
+        <div class="party-row">
+          <label>Party Type</label>
+          <select formControlName="partyType">
+            <option value="">Select Type</option>
+            <option value="Plaintiff">Plaintiff</option>
+            <option value="Defendant">Defendant</option>
+          </select>
+        </div>
+        <div class="party-row">
+          <label>Guardian Index</label>
+          <input type="number" formControlName="guardianIndex" placeholder="Guardian Index" />
+        </div>
+        <button type="button" (click)="removeDefendant(i)" [disabled]="defendants.length === 1" class="remove-btn">Remove</button>
+      </div>
+      <button type="button" (click)="addDefendant()" class="add-btn">Add Defendant</button>
+    </div>
   </div>
+
   <div formArrayName="property">
-    <app-property *ngFor="let prop of formdata.controls.property.controls;let i =index" [property]="prop" [id]="i+1" (e)="removeProperty($event)"></app-property>  </div>
-  <button type="button" (click)="addProperty()">Add Property</button>
-  <button type="submit" >Submit</button>
+    <h3>Properties</h3>
+    <app-property *ngFor="let prop of propertyFormArray.controls; let i = index"
+      [property]="prop"
+      [id]="i+1"
+      (e)="removeProperty(i)">
+    </app-property>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="submit-btn">Submit</button>
+  </div>
 </form>

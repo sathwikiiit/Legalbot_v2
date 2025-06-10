@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PropertyFormControls } from '../suit-form.component';
+import { PropertyFormControls } from '../../suit';
 
 @Component({
     selector: 'app-property',

@@ -1,6 +1,9 @@
 <div class="bar">
     <h1>List of Suits</h1>
-    <button (click)="clicked()">{{sym}}</button>
+    <button class="toggle-btn" (click)="clicked()" aria-label="Show/Hide Suits">
+      <span *ngIf="disabled; else hideIcon">&#128065;</span>
+      <ng-template #hideIcon>&#128683;</ng-template>
+    </button>
   </div>
   <div class="oframe" [hidden]="disabled">
     <table class="suit-table">
@@ -14,18 +17,18 @@
       </thead>
       <tbody>
         <tr *ngFor="let suit of suits">
-          <td>{{suit.plaintiff1 + " vs " + suit.defendant1}}</td>
+          <td>{{ (suit.plaintiffs.length > 0 ? suit.plaintiffs[0].name : '---') + ' vs ' + (suit.defendants.length > 0 ? suit.defendants[0].name : '---') }}</td>
           <td>Docx</td>
           <td>{{suit.date | date:'dd-MM-yyyy'}}</td>
-          <td><a [routerLink]="['/suit', suit.id]">File</a></td>
+          <td><a [routerLink]="['/suit', suit.id]" class="file-link">File</a></td>
         </tr>
         <tr *ngIf="suits?.length === 0">
-          <td colspan="4">No suits added</td>
+          <td colspan="4" class="no-suits">No suits added</td>
         </tr>
       </tbody>
     </table>
     <div class="button-container">
-      <button [routerLink]="['/newsuit']">New Suit</button>
-      <button>Miscellaneous</button>
+      <button [routerLink]="['/newsuit']" class="primary-btn">New Suit</button>
+      <button class="secondary-btn">Miscellaneous</button>
     </div>
   </div>

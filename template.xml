@@ -1,0 +1,71 @@
+<Templates>
+  <Component name="cause_title_core">
+    <Court bold="true" align="center">IN THE COURT OF THE HON'BLE [[court:value:value]]</Court>
+    <City bold="true" align="center">AT [[city:value:value]]</City>
+    <Between bold = "true" align="left">BETWEEN:</Between>
+  </Component>
+  <Component name = "SwornAndSigned">
+    <Content align = "left">Sworn and signed before me</Content>
+    <Content align = "left">On this the _____ of ________________________</Content>
+    <Content align = "left">at [[city:value:value]]</Content>
+    <Content align = "right">Deponent</Content>
+    <Content align = "center">Advocate</Content>
+  </Component>
+  <Component name="longCausetitle">
+    <Include component="cause_title_core"/>
+    <Plaintiffs list="true">[[pfs:value:value]]</Plaintiffs>
+    <PlaintiffDesignation align="right" condition="pfs:length:greaterthan" value="1">Plaintiffs</PlaintiffDesignation>
+    <PlaintiffDesignation align="right" condition="pfs:length:equals" value="1">Plaintiff</PlaintiffDesignation>
+    <Defendants list="true">[[dfs:value:value]]</Defendants>
+    <DefendantDesignation align="right" condition="dfs:length:greaterthan" value="1">Defendants</DefendantDesignation>
+    <DefendantDesignation align="right" condition="dfs:length:equals" value="1">Defendant</DefendantDesignation>
+  </Component>
+
+  <Component name="shortCausetitle">
+    <Include component="cause_title_core"/>
+    <Plaintiff>[[pfs:value:shortened]]</Plaintiff>
+    <PlaintiffDesignation  condition="pfs:length:greaterthan" value="1" align="right">Plaintiffs</PlaintiffDesignation>
+     <PlaintiffDesignation  condition="pfs:length:equals" value="1" align="right">Plaintiff</PlaintiffDesignation>
+    <Defendant>[[dfs:value:shortened]]</Defendant>
+    <DefendantDesignation  condition="dfs:length:greaterthan" value="1" align="right">Defendants</DefendantDesignation>
+     <DefendantDesignation  condition="dfs:length:equals" value="1" align="right">Defendant</DefendantDesignation>
+  </Component>
+
+  <Template name="show_cause_notice">
+    <Title bold="true" align="center">NOTICE TO SHOW CAUSE</Title>
+    <Include component="shortCausetitle"/>
+    <To>To:</To>
+    <Defendant indent="true">[[defendant_name:value:value]]</Defendant>
+    <Body align="justified">Whereas the above Named Petitioner has made an Application to this court. U/O 39 rule 1 &amp; 2 of CPC</Body>
+    <Appearance align="justified">You are hereby wanted to appear in this court in person, or by a pleader duly instructed on the _____ day of __________________ at 10:30 a.m. in the forenoon to show Cause of against the Application, failing which the said Application will be heard and determined exparte.</Appearance>
+    <Given align="justified">Given under my hand and seal of the Court this the ______ day of ______________________________</Given>
+  </Template>
+
+  <Template name="verification_affidavit">
+    <Include component="shortCausetitle"/>
+    <Title bold="true" align="center" underlined="true">AFFIDAVIT FILED UNDER SECTION 26 (2) OF C.P.C</Title>
+    <List level="2">
+      <Content condition="pfs:length:equals" value="1">I, the [[pfs:value:index]] do hereby solemnly affirm and state on oath as under:-</Content>
+      <Content condition="pfs:length:greaterthan" value="1">I, the [[pfs:value:index]] do solemnly affirm and state on oath as under. I am filing this affidavit on my behalf and on behalf of other plaintiffs who authorized me</Content>
+      <Para>That I am the deponent herein and plaintiff No. [[affiant_index:value:value]] in the main suit, as such I am well acquainted with the facts of the case. I am giving this affidavit on my behalf and on behalf of other Plaintiffs who authorised me</Para>
+      <Para>I filed the above [[suit_type:value:value]] in respect of suit schedule property against the defendants. I am entitled to get relief of [[relief:value:value]] by this Hon’ble court.</Para>
+      <Para>That I am filing the suit before this Honorable Court and the contents of the suit para’s are true and correct to the best of my knowledge and belief.</Para>
+    </List>
+
+    <Para bold="true">Therefore I pray</Para>:
+    <Para>That this Honorable Court may be pleased to register the suit for partition and separate possession in the interest of justice and equity.</Para>
+    <Include component="SwornAndSigned"/>
+  </Template>
+
+  <Template name="summons">
+    <FormTitle align="center">Form No. (1) Or.V, Rule: 1 or 5 of CPC</FormTitle>
+    <Title bold="true" align="center">SUMMONS FOR THE APPEARANCE OF THE DEFENDANT</Title>
+    <Include component="shortCausetitle"/>
+    <To>To:</To>
+    <Defendant indent="true">[[defendant_name:value:value]]</Defendant>
+    <Body align="justified">Whereas the Plaintiff instituted a [[suit_type:value:value]] against you for vide plaint copy attached herewith only are hereby summoned to appear in this court in person, or by a pleader duly instructed to answer all material cushions relating the suit, or by a pleader accompanied by some person able to answer all such questions, on the ___ day of __________________ at 10:30 a.m. in the forenoon to show Cause of against your defence</Body>
+    <NoticeTitle bold="true" left="true">Notice:</NoticeTitle>
+    <Notice1 align="justified" indent="true">1) Should you apprehend, your witness will not attend of their own accord you can have a summons from this court to compel the attendance of any witness and the production of any document that you have a right to call on the witness to produce, on applying to the Court and on depositing the necessary expenses.</Notice1>
+    <Notice2 left="true" indent="true">2) If you admit the claim, you should pay the money into Court together with the costs of the suit to avoid execution of the decree, which may be against your person or property, or both.</Notice2>
+  </Template>
+</Templates>

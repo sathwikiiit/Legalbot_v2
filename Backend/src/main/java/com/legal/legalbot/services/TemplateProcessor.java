@@ -43,14 +43,19 @@ public class TemplateProcessor {
                 processElement(component, data, docWriter); // Process the component
             }
         } else if (tagName.equalsIgnoreCase("List")) { // Handle List
-            List<String> listItems = new ArrayList<>(); // changed
-            Integer level = Integer.parseInt(element.getAttribute("level")); 
+            List<String> listItems = new ArrayList<>();
+            Integer level = Integer.parseInt(element.getAttribute("level"));
             for (int i = 0; i < childNodes.getLength(); i++) {
                 Node node = childNodes.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element childElement = (Element) node;
                     if (childElement.getTagName().equalsIgnoreCase("Content")) {
                         boolean shouldProcess = true;
+                        if (childElement.hasAttribute("condition")) {
+                            String condition = childElement.getAttribute("condition");
+                            String valueStr = childElement.getAttribute("value");
+                            shouldProcess = evaluateCondition(condition, valueStr, data);
+                        }
                         if (shouldProcess) {
                             String textContent = childElement.getTextContent();
                             textContent = replacePlaceholders(textContent, data);
@@ -109,16 +114,16 @@ public class TemplateProcessor {
                 Object value = data.get(key.toLowerCase());
                 if (value != null) {
                     if (valueKey.equalsIgnoreCase("value")) {
-                        replacement =value.toString();
+                        replacement = value.toString();
                     } else if (valueKey.equalsIgnoreCase("shortened")) {
-                        if (value instanceof Party[]) {
-                            Party[] parties = (Party[]) value;
-                            if (parties.length == 1) {
-                                replacement = parties[0].getName();
-                            } else if (parties.length == 2) {
-                                replacement = parties[0].getName() + " and another";
-                            } else if (parties.length > 2){
-                                replacement = parties[0].getName() + " and others";
+                        if (value instanceof List) {
+                            List<?> parties = (List<?>) value;
+                            if (parties.size() == 1) {
+                                replacement = ((Party)parties.get(0)).getName();
+                            } else if (parties.size() == 2) {
+                                replacement = ((Party)parties.get(0)).getName() + " and another";
+                            } else if (parties.size() > 2){
+                                replacement = ((Party)parties.get(0)).getName() + " and others";
                             }
                         } else {
                             replacement = String.valueOf(value);
@@ -126,20 +131,20 @@ public class TemplateProcessor {
                     }
                     else if(valueKey.equalsIgnoreCase("index"))
                     {
-                         if (value instanceof Party[]) {
-                            Party[] list = (Party[]) value;
-                            if (list.length!=0) {
-                                replacement = String.valueOf(list[0]); //get first element.
+                        if (value instanceof List) {
+                            List<?> list = (List<?>) value;
+                            if (!list.isEmpty()) {
+                                replacement = String.valueOf(list.get(0)); //get first element.
                             }
                         } else {
                             replacement = String.valueOf(value);
                         }
                     }
                     else if (valueKey.equalsIgnoreCase("affiant_index")) {
-                        if (value instanceof Party[]) {
-                            Party[] list = (Party[]) value;
-                            if (list.length!=0) {
-                                replacement = String.valueOf(list[0]); // First affiant
+                        if (value instanceof List) {
+                            List<?> list = (List<?>) value;
+                            if (!list.isEmpty()) {
+                                replacement = String.valueOf(list.get(0)); // First affiant
                             }
                         }
                         else{
@@ -183,61 +188,29 @@ public class TemplateProcessor {
         return null;
     }
 
-    private static boolean evaluateCondition(String condition, String valueStr, Map<String, ?> data) {
+    private static boolean evaluateCondition(String condition, String value, Map<String, ?> data) {
+        if (condition == null || value == null) return true;
+        // Example: pfs:length:equals
         String[] parts = condition.split(":");
-        if (parts.length < 2) {
-            return false; // Invalid condition format
-        }
+        if (parts.length != 3) return false;
 
-        String key = parts[0];
-        String preOperator = parts[1];
-        String operator = parts.length > 2 ? parts[2] : "";
-        Object dataValue = data.get(key.toLowerCase());
-        if (dataValue == null) {
-            return false; // Key not found in data
-        }
-        Object comparable;
-        if (preOperator.equalsIgnoreCase("length")){
-            if (dataValue instanceof Party[]){
-                comparable = ((Party[])dataValue).length;
-            } else {
-                comparable = ((Object[])dataValue).length;
-            }
-        } else if (preOperator.equalsIgnoreCase("value")){
-            comparable = dataValue;
-        } else{
-            comparable = dataValue;
-        }
+        String varName = parts[0]; // e.g., "pfs"
+        String property = parts[1]; // e.g., "length"
+        String operator = parts[2]; // e.g., "equals"
 
-        if (operator.equalsIgnoreCase("equals")) {
-            return comparable.toString().equals(valueStr);
-        } else if (operator.equalsIgnoreCase("greaterthan")) {
-            if (preOperator.equalsIgnoreCase("length")) {
-                if (dataValue instanceof Party[]) {
-                    int length = ((Party []) dataValue).length;
-                    try {
-                        int compareValue = Integer.parseInt(valueStr);
-                        return length > compareValue;
-                    } catch (NumberFormatException e) {
-                        return false; // Invalid comparison value
-                    }
-                }
-            }
-        }
-        else if (operator.equalsIgnoreCase("lessthan")){
-             if (preOperator.equalsIgnoreCase("length")) {
-                if (dataValue instanceof Party[]) {
-                    int length = ((Party[]) dataValue).length;
-                    try {
-                        int compareValue = Integer.parseInt(valueStr);
-                        return length < compareValue;
-                    } catch (NumberFormatException e) {
-                        return false; // Invalid comparison value
-                    }
-                }
-            }
-        }
+        Object var = data.get(varName);
 
+        if ("length".equals(property) && var instanceof List) {
+            int actualLength = ((List<?>) var).size();
+            int expectedValue = Integer.parseInt(value);
+
+            return switch (operator) {
+                case "equals"      -> actualLength == expectedValue;
+                case "greaterthan" -> actualLength > expectedValue;
+                case "lessthan"    -> actualLength < expectedValue;
+                default            -> false;
+            };
+        }
         return false;
     }
 }
