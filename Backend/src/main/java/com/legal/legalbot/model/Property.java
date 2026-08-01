@@ -27,6 +27,8 @@ public class Property {
     @JsonBackReference(value = "suit-property")
     private Suit suit;
 
+    private String context;
+
     public Property() {
         // Default constructor
     }
@@ -95,6 +97,14 @@ public class Property {
     public void setSuit(Suit suit) {
         this.suit = suit;
     }
+
+    public String getContext() {
+        return context;
+    }
+    public void setContext(String context) {
+        this.context = context;
+    }
+    
 
     // Constructors, getters, setters, and other methods as needed
 

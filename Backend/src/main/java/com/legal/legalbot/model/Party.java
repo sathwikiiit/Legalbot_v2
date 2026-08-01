@@ -28,6 +28,7 @@ public class Party {
     private String address;
     private String partyType; // "plaintiff" or "defendant"
     private int guardianIndex;
+    private String context;
 
     @ManyToOne
     @JsonBackReference(value = "suit-plaintiffs")
@@ -134,5 +135,10 @@ public class Party {
     public void setGuardianIndex(int guardianIndex) {
         this.guardianIndex = guardianIndex;
     }
-        
+    public String getContext() {
+        return context;
+    }
+    public void setContext(String context) {
+        this.context = context;
+    }
 }

@@ -1,4 +1,5 @@
 package com.legal.legalbot.services;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.legal.legalbot.dto.SuitDto;
 import com.legal.legalbot.model.Suit;
 import com.legal.legalbot.repository.SuitRepos;
+import com.legal.legalbot.services.docgen.legacy.DocGen;
 
 @Service
 public class SuitService {

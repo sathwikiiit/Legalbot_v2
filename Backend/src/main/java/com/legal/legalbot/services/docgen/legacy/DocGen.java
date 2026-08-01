@@ -1,4 +1,5 @@
-package com.legal.legalbot.services;
+package com.legal.legalbot.services.docgen.legacy;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

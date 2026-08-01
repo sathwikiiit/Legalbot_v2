@@ -1,5 +1,6 @@
 package com.legal.legalbot.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,16 +25,23 @@ public class Suit {
     private Long id;
     private String court;
     private String city;
-    private String lawyer;
+
+    @OneToMany(mappedBy = "suit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "suit-advocates")
+    private List<Advocate> advocates = new ArrayList<>();
+
     @JoinColumn(name = "suit_id")
     @OneToMany(cascade = CascadeType.ALL)
     @JsonManagedReference(value = "suit-plaintiffs")
     private List<Party> plaintiffs;
+
     @JoinColumn(name = "suit_id")
     @OneToMany(cascade = CascadeType.ALL)
     @JsonManagedReference(value = "suit-defendants")
     private List<Party> defendants;
     private Date date;
+    private String context;
+
     public Suit() {
         // Default constructor
     }
@@ -42,11 +50,9 @@ public class Suit {
         return date;
     }
 
-
     public void setDate(Date date) {
         this.date = date;
     }
-
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "suit_id")
@@ -59,10 +65,9 @@ public class Suit {
 
     private String affiantIndex;
 
-    public String details(){
-        return getPlaintiff1()+" vs "+getDefendant1();
+    public String details() {
+        return getPlaintiff1() + " vs " + getDefendant1();
     }
-
 
     public Long getId() {
         return id;
@@ -72,64 +77,121 @@ public class Suit {
         return court;
     }
 
-
     public void setCourt(String court) {
         this.court = court;
     }
-
 
     public String getCity() {
         return city;
     }
 
-
     public void setCity(String city) {
         this.city = city;
     }
 
+    public List<Advocate> getAdvocates() {
+        return advocates;
+    }
+
+    public void setAdvocates(List<Advocate> advocates) {
+        if (this.advocates == null) {
+            this.advocates = new ArrayList<>();
+        } else {
+            this.advocates.clear();
+        }
+
+        if (advocates != null) {
+            for (Advocate advocate : advocates) {
+                addAdvocate(advocate);
+            }
+        }
+    }
+
+    public void addAdvocate(Advocate advocate) {
+        if (advocate == null) {
+            return;
+        }
+        if (this.advocates == null) {
+            this.advocates = new ArrayList<>();
+        }
+        if (!this.advocates.contains(advocate)) {
+            this.advocates.add(advocate);
+        }
+        advocate.setSuit(this);
+    }
+
+    public void removeAdvocate(Advocate advocate) {
+        if (advocate == null || this.advocates == null) {
+            return;
+        }
+        this.advocates.remove(advocate);
+        advocate.setSuit(null);
+    }
+
+    public List<String> getAdvocateNames() {
+        List<String> names = new ArrayList<>();
+        if (advocates == null) {
+            return names;
+        }
+        for (Advocate advocate : advocates) {
+            if (advocate != null && advocate.getName() != null && !advocate.getName().isBlank()) {
+                names.add(advocate.getName());
+            }
+        }
+        return names;
+    }
 
     public String getLawyer() {
-        return lawyer;
+        List<String> names = getAdvocateNames();
+        return names.isEmpty() ? null : String.join(", ", names);
     }
-
 
     public void setLawyer(String lawyer) {
-        this.lawyer = lawyer;
-    }
+        if (lawyer == null || lawyer.isBlank()) {
+            if (advocates != null) {
+                advocates.clear();
+            }
+            return;
+        }
 
+        if (advocates == null) {
+            advocates = new ArrayList<>();
+        }
+        if (advocates.isEmpty()) {
+            addAdvocate(new Advocate(lawyer, "Counsel"));
+            return;
+        }
+
+        advocates.get(0).setName(lawyer);
+    }
 
     public List<Party> getPlaintiffs() {
         return plaintiffs;
     }
 
-
     public void setPlaintiffs(List<Party> plaintiffs) {
         this.plaintiffs = plaintiffs;
     }
-
 
     public List<Party> getDefendants() {
         return defendants;
     }
 
-
     public void setDefendants(List<Party> defendants) {
         this.defendants = defendants;
     }
 
-
     public String getPlaintiff1() {
-        return this.plaintiffs.get(0).getName();
+        return this.plaintiffs != null && !this.plaintiffs.isEmpty() ? this.plaintiffs.get(0).getName() : null;
     }
 
     public String getDefendant1() {
-        return this.defendants.get(0).getName();
+        return this.defendants != null && !this.defendants.isEmpty() ? this.defendants.get(0).getName() : null;
     }
 
     public List<Property> getProperty() {
         return property;
     }
-
 
     public void setProperty(List<Property> property) {
         this.property = property;
@@ -141,12 +203,14 @@ public class Suit {
         map.put("dfs", defendants);
         map.put("court", court);
         map.put("city", city);
+        map.put("advocates", getAdvocateNames());
         map.put("suit_type", suitType);
         map.put("relief", relief);
-        map.put("affiant_index",affiantIndex);
+        map.put("affiant_index", affiantIndex);
         return map;
     }
-        /**
+
+    /**
      * Returns a map from each guardian Party to the set of plaintiffs they are guarding.
      */
     public Map<Party, Set<Party>> getGuardiansToPlaintiffsMap() {
@@ -168,40 +232,38 @@ public class Suit {
         return guardianMap;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        public void setId(Long id) {
-            this.id = id;
-        }
+    public String getSuitType() {
+        return suitType;
+    }
 
+    public void setSuitType(String suitType) {
+        this.suitType = suitType;
+    }
 
-        public String getSuitType() {
-            return suitType;
-        }
+    public String getRelief() {
+        return relief;
+    }
 
+    public void setRelief(String relief) {
+        this.relief = relief;
+    }
 
-        public void setSuitType(String suitType) {
-            this.suitType = suitType;
-        }
+    public String getAffiantIndex() {
+        return affiantIndex;
+    }
 
+    public void setAffiantIndex(String affiantIndex) {
+        this.affiantIndex = affiantIndex;
+    }
 
-        public String getRelief() {
-            return relief;
-        }
-
-
-        public void setRelief(String relief) {
-            this.relief = relief;
-        }
-
-
-        public String getAffiantIndex() {
-            return affiantIndex;
-        }
-
-
-        public void setAffiantIndex(String affiantIndex) {
-            this.affiantIndex = affiantIndex;
-        }
-
-
+    public String getContext() {
+        return context;
+    }
+    public void setContext(String context) {
+        this.context = context;
+    }
 }
