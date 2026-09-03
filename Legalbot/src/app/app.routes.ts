@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard';
 import { VerificationComponent } from './verification/verification.component';
 import { SuitFormComponent } from './suit-form/suit-form.component';
+import { DocumentDraftComponent } from './document-draft/document-draft.component';
 
 export const routes: Routes = [
     {
@@ -27,6 +28,12 @@ export const routes: Routes = [
         title:'Enter the Details',
         canActivate:[AuthGuard],
         component:SuitFormComponent,
+    },
+    {
+        path:'document-draft',
+        title:'Document Drafting',
+        canActivate:[AuthGuard],
+        component:DocumentDraftComponent
     },
     {
         path:'suit/:id',

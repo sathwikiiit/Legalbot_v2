@@ -1,138 +1,473 @@
-<form (ngSubmit)="submited()" [formGroup]="formdata">
-  <div class="type">
-    <label for="suitType">Type of Suit</label>
-    <select id="suitType" formControlName="suitType">
-      <option value="">Select Type</option>
-      <option value="partition">Suit For Partition</option>
-      <option value="declaration_injunction">Suit For Declaration & Injunction</option>
-      <option value="declaration_recovery">Suit For Declaration & Recovery of possession</option>
-      <option value="injunction">Suit For Injunction</option>
-      <option value="recovery_amount">Suit For Recovery of Amount</option>
-    </select>
-    <div class="error" *ngIf="formdata.get('suitType')?.invalid && formdata.get('suitType')?.touched">Type is required</div>
+<div class="page-container animate-fade-in">
 
-    <label for="court">Court Name</label>
-    <input type="text" id="court" formControlName="court" placeholder="Enter court name" />
-    <div class="error" *ngIf="formdata.get('court')?.invalid && formdata.get('court')?.touched">Court is required</div>
-
-    <label for="city">City</label>
-    <input type="text" id="city" formControlName="city" placeholder="Enter city" />
-    <div class="error" *ngIf="formdata.get('city')?.invalid && formdata.get('city')?.touched">City is required</div>
-
-    <label for="counselDetails">Counsel</label>
-    <textarea id="counselDetails" formControlName="counselDetails" placeholder="Counsel details"></textarea>
+  <!-- Page Header -->
+  <div class="form-page-header">
+    <div class="back-link">
+      <button routerLink="/dashboard" class="btn btn-ghost btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        Back to Dashboard
+      </button>
+    </div>
+    <h1 class="page-title">{{ id ? 'Edit Suit Record' : 'Register New Suit' }}</h1>
+    <p class="page-subtitle">Complete the step-by-step suit registration wizard. Property schedule is optional.</p>
   </div>
 
-  <div class="parties">
-    <h3>Plaintiffs</h3>
-    <div formArrayName="plaintiffs">
-      <div *ngFor="let plaintiff of plaintiffs.controls; let i = index" [formGroupName]="i" class="party-block">
-        <div class="party-row">
-          <label>Name</label>
-          <input type="text" formControlName="name" placeholder="Name" />
-          <div class="error" *ngIf="plaintiff.get('name')?.invalid && plaintiff.get('name')?.touched">Required</div>
-        </div>
-        <div class="party-row">
-          <label>Address</label>
-          <input type="text" formControlName="address" placeholder="Address" />
-        </div>
-        <div class="party-row">
-          <label>Age</label>
-          <input type="number" formControlName="age" placeholder="Age" min="0" max="120" />
-        </div>
-        <div class="party-row">
-          <label>Gender</label>
-          <select formControlName="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <div class="party-row">
-          <label>Occupation</label>
-          <input type="text" formControlName="occupation" placeholder="Occupation" />
-        </div>
-        <div class="party-row">
-          <label>Relation</label>
-          <input type="text" formControlName="relation" placeholder="Relation" />
-        </div>
-        <div class="party-row">
-          <label>Party Type</label>
-          <select formControlName="partyType">
-            <option value="">Select Type</option>
-            <option value="Plaintiff">Plaintiff</option>
-            <option value="Defendant">Defendant</option>
-          </select>
-        </div>
-        <div class="party-row">
-          <label>Guardian Index</label>
-          <input type="number" formControlName="guardianIndex" placeholder="Guardian Index" />
-        </div>
-        <button type="button" (click)="removePlaintiff(i)" [disabled]="plaintiffs.length === 1" class="remove-btn">Remove</button>
-      </div>
-      <button type="button" (click)="addPlaintiff()" class="add-btn">Add Plaintiff</button>
+  <form [formGroup]="formdata" (ngSubmit)="submited()" class="suit-form-layout">
+
+    <!-- Stepper Navigation Header -->
+    <div class="tab-nav glass-card">
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'basic'"
+              [class.tab-error]="submitted && !isBasicTabValid()"
+              (click)="goToTab('basic')">
+        <span class="step-badge">1</span>
+        Court & Basic Info
+        <span *ngIf="isBasicTabValid()" class="valid-check">✓</span>
+      </button>
+
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'plaintiffs'"
+              [class.tab-error]="submitted && !isPlaintiffsTabValid()"
+              (click)="goToTab('plaintiffs')">
+        <span class="step-badge">2</span>
+        Plaintiffs
+        <span class="tab-count">{{ plaintiffs.length }}</span>
+      </button>
+
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'defendants'"
+              [class.tab-error]="submitted && !isDefendantsTabValid()"
+              (click)="goToTab('defendants')">
+        <span class="step-badge">3</span>
+        Defendants
+        <span class="tab-count">{{ defendants.length }}</span>
+      </button>
+
+      <button type="button" class="tab-btn" [class.tab-active]="activeTab === 'property'"
+              (click)="goToTab('property')">
+        <span class="step-badge">4</span>
+        Property (Optional)
+        <span class="tab-count">{{ propertyFormArray.length }}</span>
+      </button>
     </div>
 
-    <h3>Defendants</h3>
-    <div formArrayName="defendants">
-      <div *ngFor="let defendant of defendants.controls; let i = index" [formGroupName]="i" class="party-block">
-        <div class="party-row">
-          <label>Name</label>
-          <input type="text" formControlName="name" placeholder="Name" />
-          <div class="error" *ngIf="defendant.get('name')?.invalid && defendant.get('name')?.touched">Required</div>
+    <!-- TAB 1: BASIC INFO -->
+    <div *ngIf="activeTab === 'basic'" class="tab-panel glass-card animate-fade-in">
+      <h3 class="section-heading">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+        Step 1: Court Forum & Legal Category
+      </h3>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label" for="court">Court Jurisdiction Title *</label>
+          <input id="court" type="text" formControlName="court" class="form-control"
+                 [class.is-invalid]="formdata.get('court')?.invalid && (formdata.get('court')?.touched || submitted)"
+                 placeholder="e.g. IN THE COURT OF THE CIVIL JUDGE (SR DIVISION)" />
+          <div *ngIf="formdata.get('court')?.invalid && (formdata.get('court')?.touched || submitted)" class="form-error">
+            ⚠️ Court Title is required.
+          </div>
         </div>
-        <div class="party-row">
-          <label>Address</label>
-          <input type="text" formControlName="address" placeholder="Address" />
+
+        <div class="form-group">
+          <label class="form-label" for="city">City / Station & State *</label>
+          <input id="city" type="text" formControlName="city" class="form-control"
+                 [class.is-invalid]="formdata.get('city')?.invalid && (formdata.get('city')?.touched || submitted)"
+                 placeholder="e.g. Bengaluru, Karnataka" />
+          <div *ngIf="formdata.get('city')?.invalid && (formdata.get('city')?.touched || submitted)" class="form-error">
+            ⚠️ City / Station is required.
+          </div>
         </div>
-        <div class="party-row">
-          <label>Age</label>
-          <input type="number" formControlName="age" placeholder="Age" min="0" max="120" />
+
+        <div class="form-group">
+          <label class="form-label" for="lawyer">Advocate / Senior Counsel Name</label>
+          <input id="lawyer" type="text" formControlName="lawyer" class="form-control"
+                 placeholder="e.g. Adv. Rajesh Sharma, High Court Advocate" />
         </div>
-        <div class="party-row">
-          <label>Gender</label>
-          <select formControlName="gender">
-            <option value="">Select Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+
+        <div class="form-group">
+          <label class="form-label" for="suitType">Suit Category / Nature *</label>
+          <select id="suitType" formControlName="suitType" class="form-control"
+                  [class.is-invalid]="formdata.get('suitType')?.invalid && (formdata.get('suitType')?.touched || submitted)">
+            <option value="">-- Select Suit Type --</option>
+            <option value="PLAINT_RECOVERY">Money Suit / Recovery of Debt (Order XXXVII)</option>
+            <option value="PLAINT_INJUNCTION">Declaration of Title & Permanent Injunction</option>
+            <option value="PLAINT_SPECIFIC_PERFORMANCE">Specific Performance of Agreement to Sell</option>
+            <option value="EVICTION_PETITION">Eviction of Tenant & Rent Arrears</option>
           </select>
+          <div *ngIf="formdata.get('suitType')?.invalid && (formdata.get('suitType')?.touched || submitted)" class="form-error">
+            ⚠️ Please select a Suit Category.
+          </div>
         </div>
-        <div class="party-row">
-          <label>Occupation</label>
-          <input type="text" formControlName="occupation" placeholder="Occupation" />
-        </div>
-        <div class="party-row">
-          <label>Relation</label>
-          <input type="text" formControlName="relation" placeholder="Relation" />
-        </div>
-        <div class="party-row">
-          <label>Party Type</label>
-          <select formControlName="partyType">
-            <option value="">Select Type</option>
-            <option value="Plaintiff">Plaintiff</option>
-            <option value="Defendant">Defendant</option>
-          </select>
-        </div>
-        <div class="party-row">
-          <label>Guardian Index</label>
-          <input type="number" formControlName="guardianIndex" placeholder="Guardian Index" />
-        </div>
-        <button type="button" (click)="removeDefendant(i)" [disabled]="defendants.length === 1" class="remove-btn">Remove</button>
       </div>
-      <button type="button" (click)="addDefendant()" class="add-btn">Add Defendant</button>
+
+      <div class="form-group" style="margin-top: 8px;">
+        <label class="form-label" for="relief">Main Relief & Decree Claimed</label>
+        <textarea id="relief" rows="3" formControlName="relief" class="form-control"
+                  placeholder="State the core decree sought (e.g. Decree for recovery of Rs. 25,00,000/- with interest @ 18% p.a., costs of suit and permanent injunction)"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="affiantIndex">Affiant Index (Plaintiff No. who verifies plaint)</label>
+        <input id="affiantIndex" type="text" formControlName="affiantIndex" class="form-control"
+               style="max-width: 120px;" placeholder="1" />
+      </div>
+
+      <!-- Step Navigation Footer -->
+      <div class="step-footer">
+        <div></div>
+        <button type="button" (click)="nextTab()" class="btn btn-primary">
+          Next: Plaintiffs
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
     </div>
-  </div>
 
-  <div formArrayName="property">
-    <h3>Properties</h3>
-    <app-property *ngFor="let prop of propertyFormArray.controls; let i = index"
-      [property]="prop"
-      [id]="i+1"
-      (e)="removeProperty(i)">
-    </app-property>
-  </div>
+    <!-- TAB 2: PLAINTIFFS -->
+    <div *ngIf="activeTab === 'plaintiffs'" class="tab-panel glass-card animate-fade-in">
+      <div class="section-header">
+        <h3 class="section-heading">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Step 2: Plaintiff(s) Details (Individual or Organization)
+        </h3>
+        <button type="button" (click)="addPlaintiff()" class="btn btn-emerald btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Co-Plaintiff
+        </button>
+      </div>
 
-  <div class="form-actions">
-    <button type="submit" class="submit-btn">Submit</button>
-  </div>
-</form>
+      <ng-container formArrayName="plaintiffs">
+        <div *ngFor="let ctrl of plaintiffs.controls; let i = index" [formGroupName]="i"
+             class="party-card">
+          <div class="party-card-header">
+            <div class="party-title-wrap">
+              <span class="party-label">Plaintiff #{{ i + 1 }}</span>
+              <!-- Entity Type Pill -->
+              <div class="entity-toggle">
+                <label class="toggle-opt" [class.toggle-active]="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+                  <input type="radio" formControlName="entityType" value="INDIVIDUAL" class="sr-only" /> Individual
+                </label>
+                <label class="toggle-opt" [class.toggle-active]="ctrl.get('entityType')?.value === 'ORGANIZATION'">
+                  <input type="radio" formControlName="entityType" value="ORGANIZATION" class="sr-only" /> Organization / Entity
+                </label>
+              </div>
+            </div>
+            <button type="button" *ngIf="plaintiffs.length > 1" (click)="removePlaintiff(i)"
+                    class="btn btn-danger btn-xs">
+              Remove
+            </button>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Company / Bank / Firm Name *' : 'Full Name *' }}
+              </label>
+              <input type="text" formControlName="name" class="form-control"
+                     [class.is-invalid]="ctrl.get('name')?.invalid && (ctrl.get('name')?.touched || submitted)"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'e.g. M/s HDFC Bank Ltd.' : 'e.g. Ramesh Kumar'" />
+              <div *ngIf="ctrl.get('name')?.invalid && (ctrl.get('name')?.touched || submitted)" class="form-error">
+                ⚠️ Name is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Represented By / Designation' : 'Parentage / Relation' }}
+              </label>
+              <input type="text" formControlName="relation" class="form-control"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'e.g. Rep. by Managing Director / Manager' : 'e.g. S/o Late Suresh Kumar'" />
+            </div>
+
+            <div class="form-group" *ngIf="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+              <label class="form-label">Gender</label>
+              <select formControlName="gender" class="form-control">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+              <label class="form-label">Age</label>
+              <input type="number" formControlName="age" class="form-control" placeholder="e.g. 42" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Business Type / Industry' : 'Occupation' }}
+              </label>
+              <input type="text" formControlName="occupation" class="form-control"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Banking / Commercial Enterprise' : 'Business / Service'" />
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Registered Office / Residential Address</label>
+              <input type="text" formControlName="address" class="form-control"
+                     placeholder="Door No, Building, Street, Ward, City, Pin" />
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Step Navigation Footer -->
+      <div class="step-footer">
+        <button type="button" (click)="prevTab()" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back
+        </button>
+        <button type="button" (click)="nextTab()" class="btn btn-primary">
+          Next: Defendants
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 3: DEFENDANTS -->
+    <div *ngIf="activeTab === 'defendants'" class="tab-panel glass-card animate-fade-in">
+      <div class="section-header">
+        <h3 class="section-heading">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+          </svg>
+          Step 3: Defendant(s) Details (Individual or Organization)
+        </h3>
+        <button type="button" (click)="addDefendant()" class="btn btn-danger btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Co-Defendant
+        </button>
+      </div>
+
+      <ng-container formArrayName="defendants">
+        <div *ngFor="let ctrl of defendants.controls; let i = index" [formGroupName]="i"
+             class="party-card party-card-defendant">
+          <div class="party-card-header">
+            <div class="party-title-wrap">
+              <span class="party-label">Defendant #{{ i + 1 }}</span>
+              <!-- Entity Type Toggle -->
+              <div class="entity-toggle">
+                <label class="toggle-opt" [class.toggle-active]="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+                  <input type="radio" formControlName="entityType" value="INDIVIDUAL" class="sr-only" /> Individual
+                </label>
+                <label class="toggle-opt" [class.toggle-active]="ctrl.get('entityType')?.value === 'ORGANIZATION'">
+                  <input type="radio" formControlName="entityType" value="ORGANIZATION" class="sr-only" /> Organization / Firm
+                </label>
+              </div>
+            </div>
+            <button type="button" *ngIf="defendants.length > 1" (click)="removeDefendant(i)"
+                    class="btn btn-danger btn-xs">
+              Remove
+            </button>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Company / Firm / Entity Name *' : 'Full Name *' }}
+              </label>
+              <input type="text" formControlName="name" class="form-control"
+                     [class.is-invalid]="ctrl.get('name')?.invalid && (ctrl.get('name')?.touched || submitted)"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'e.g. M/s ABC Traders Pvt Ltd' : 'e.g. Vijay Verma'" />
+              <div *ngIf="ctrl.get('name')?.invalid && (ctrl.get('name')?.touched || submitted)" class="form-error">
+                ⚠️ Defendant Name is required.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Represented By / Designation' : 'Parentage / Relation' }}
+              </label>
+              <input type="text" formControlName="relation" class="form-control"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'e.g. Rep. by Director' : 'e.g. S/o Somnath Verma'" />
+            </div>
+
+            <div class="form-group" *ngIf="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+              <label class="form-label">Gender</label>
+              <select formControlName="gender" class="form-control">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="ctrl.get('entityType')?.value === 'INDIVIDUAL'">
+              <label class="form-label">Age</label>
+              <input type="number" formControlName="age" class="form-control" placeholder="e.g. 48" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                {{ ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Business Type' : 'Occupation' }}
+              </label>
+              <input type="text" formControlName="occupation" class="form-control"
+                     [placeholder]="ctrl.get('entityType')?.value === 'ORGANIZATION' ? 'Commercial Enterprise' : 'Commercial Trader'" />
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="form-label">Address</label>
+              <input type="text" formControlName="address" class="form-control"
+                     placeholder="Door No, Street, Layout, City" />
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Step Navigation Footer -->
+      <div class="step-footer">
+        <button type="button" (click)="prevTab()" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back
+        </button>
+        <button type="button" (click)="nextTab()" class="btn btn-primary">
+          Next: Property Schedule (Optional)
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 4: PROPERTY (OPTIONAL) -->
+    <div *ngIf="activeTab === 'property'" class="tab-panel glass-card animate-fade-in">
+      <div class="section-header">
+        <div>
+          <h3 class="section-heading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Step 4: Schedule Property Particulars (Optional)
+          </h3>
+          <p class="section-subtext">Optional. Property details are required only for Suits for Injunction, Possession or Specific Performance.</p>
+        </div>
+        <button type="button" (click)="addProperty()" class="btn btn-ghost btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Property Item
+        </button>
+      </div>
+
+      <div *ngIf="propertyFormArray.length === 0" class="empty-property-notice">
+        <span class="notice-icon">🏡</span>
+        <div>
+          <h4 class="notice-title">No Property Attached</h4>
+          <p class="notice-desc">Property schedule is optional for general money suits or debt recovery. If this suit involves land, house or flat, click "Add Property Item" above.</p>
+        </div>
+      </div>
+
+      <ng-container formArrayName="property">
+        <div *ngFor="let ctrl of propertyFormArray.controls; let i = index" [formGroupName]="i"
+             class="party-card">
+          <div class="party-card-header">
+            <span class="party-label">Property Item #{{ i + 1 }}</span>
+            <button type="button" (click)="removeProperty(i)" class="btn btn-danger btn-xs">
+              Remove Property
+            </button>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Property Category / Type</label>
+              <select formControlName="type" class="form-control">
+                <option value="">-- Select Category --</option>
+                <option *ngFor="let pt of propertyTypes" [value]="pt">{{ pt }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Market Value (INR)</label>
+              <input type="text" formControlName="mkvalue" class="form-control" placeholder="e.g. 50,00,000" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Extent / Area</label>
+              <input type="text" formControlName="extent" class="form-control" placeholder="e.g. 2400 sq. ft. / 2 Acres" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Survey / Khata / Sy No.</label>
+              <input type="text" formControlName="syn" class="form-control" placeholder="e.g. Sy. No. 112/A" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">House / Flat / Door No.</label>
+              <input type="text" formControlName="hn" class="form-control" placeholder="e.g. Flat No. 402 / Door 12" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Plot / Site No.</label>
+              <input type="text" formControlName="plotNo" class="form-control" placeholder="e.g. Plot No. 88" />
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Step Navigation Footer -->
+      <div class="step-footer">
+        <button type="button" (click)="prevTab()" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Back
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+          </svg>
+          Save & Register Suit
+        </button>
+      </div>
+    </div>
+
+    <!-- Submit bar (Always available at bottom) -->
+    <div class="submit-bar glass-card">
+      <div class="submit-info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        <span>Court, City, Suit Type, Plaintiff and Defendant names are required. Property is optional.</span>
+      </div>
+      <div class="submit-actions">
+        <button type="button" routerLink="/dashboard" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+          </svg>
+          Save Suit Record
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>

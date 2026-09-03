@@ -1,0 +1,185 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Legalbot API",
+    "version": "1.0.0",
+    "description": "OpenAPI export for the Legalbot backend endpoints"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:9090"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "get": {
+        "summary": "Health check / auth endpoint",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/insert": {
+      "post": {
+        "summary": "Create a suit",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "List suits for a lawyer",
+        "parameters": [
+          {
+            "name": "lawyer",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of suits"
+          }
+        }
+      }
+    },
+    "/generate": {
+      "post": {
+        "summary": "Generate a document",
+        "responses": {
+          "200": {
+            "description": "Document generated"
+          }
+        }
+      }
+    },
+    "/suits": {
+      "get": {
+        "summary": "List all suits",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/documents/templates": {
+      "get": {
+        "summary": "Get document templates",
+        "responses": {
+          "200": {
+            "description": "Templates returned"
+          }
+        }
+      }
+    },
+    "/api/documents/templates/{templateKey}": {
+      "get": {
+        "summary": "Get a document template",
+        "parameters": [
+          {
+            "name": "templateKey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template returned"
+          }
+        }
+      }
+    },
+    "/api/documents/initialize": {
+      "post": {
+        "summary": "Initialize a document draft",
+        "responses": {
+          "200": {
+            "description": "Draft initialized"
+          }
+        }
+      }
+    },
+    "/api/documents/sections/preview": {
+      "post": {
+        "summary": "Preview a document section",
+        "responses": {
+          "200": {
+            "description": "Section preview response"
+          }
+        }
+      }
+    },
+    "/api/documents/sections/update": {
+      "put": {
+        "summary": "Update section contexts",
+        "responses": {
+          "200": {
+            "description": "Updated contexts"
+          }
+        }
+      }
+    },
+    "/api/documents/ai/step": {
+      "post": {
+        "summary": "Run an AI document step",
+        "responses": {
+          "200": {
+            "description": "AI step result"
+          }
+        }
+      }
+    },
+    "/api/documents/build": {
+      "post": {
+        "summary": "Build a document",
+        "responses": {
+          "200": {
+            "description": "Document build response"
+          }
+        }
+      }
+    },
+    "/api/documents/drafts/{draftId}": {
+      "get": {
+        "summary": "Get draft context",
+        "parameters": [
+          {
+            "name": "draftId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Draft retrieved"
+          }
+        }
+      }
+    }
+  }
+}

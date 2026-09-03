@@ -1,0 +1,315 @@
+{
+  "info": {
+    "_postman_id": "d0b67c34-2f64-4b2d-8d4f-b8b6d234f11c",
+    "name": "Legalbot API",
+    "description": "Postman collection generated from the Legalbot request definitions in the Requests/Legalbot folder.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "ai step",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"draftId\": \"draft-123\",\n  \"documentType\": \"default_civil_suit\",\n  \"sectionKey\": \"caseBackground\",\n  \"taskKey\": \"generateBackground\",\n  \"conversationHistory\": \"User: Provide a concise background statement.\",\n  \"suitDto\": {\n    \"id\": 1,\n    \"court\": \"District Court\",\n    \"city\": \"Bangalore\",\n    \"lawyer\": \"Advocate Rao\",\n    \"plaintiffs\": [\n      {\n        \"name\": \"Anita Sharma\",\n        \"relation\": \"Plaintiff\",\n        \"gender\": \"Female\",\n        \"age\": 29,\n        \"occupation\": \"Teacher\",\n        \"address\": \"1st Main, Bangalore\",\n        \"partyType\": \"PLAINTIFF\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"defendants\": [\n      {\n        \"name\": \"Ravi Kumar\",\n        \"relation\": \"Defendant\",\n        \"gender\": \"Male\",\n        \"age\": 33,\n        \"occupation\": \"Contractor\",\n        \"address\": \"2nd Cross, Mysore\",\n        \"partyType\": \"DEFENDANT\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"property\": [\n      {\n        \"type\": \"Residential\",\n        \"mkvalue\": \"Apartment\",\n        \"extent\": \"1200 sq.ft\",\n        \"syn\": \"NA\",\n        \"hn\": \"H-77\",\n        \"plotNo\": \"12B\"\n      }\n    ],\n    \"suitType\": \"civil\",\n    \"relief\": \"Damages\",\n    \"affiantIndex\": \"1\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/api/documents/ai/step",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "api",
+            "documents",
+            "ai",
+            "step"
+          ]
+        }
+      }
+    },
+    {
+      "name": "build document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"draftId\": \"draft-123\",\n  \"sectionKey\": \"caseBackground\",\n  \"renderContexts\": [\n    {\n      \"sectionKey\": \"caseBackground\",\n      \"definitionKey\": \"backgroundText\",\n      \"context\": \"Case facts and dispute details.\",\n      \"value\": \"The defendant breached the lease agreement.\",\n      \"order\": 1,\n      \"sourceType\": \"STATIC\",\n      \"editable\": true\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/api/documents/build",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "api",
+            "documents",
+            "build"
+          ]
+        }
+      }
+    },
+    {
+      "name": "create suit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"court\": \"District Court\",\n  \"city\": \"Bangalore\",\n  \"lawyer\": \"Advocate Rao\",\n  \"plaintiffs\": [\n    {\n      \"name\": \"Anita Sharma\",\n      \"relation\": \"Plaintiff\",\n      \"gender\": \"Female\",\n      \"age\": 29,\n      \"occupation\": \"Teacher\",\n      \"address\": \"1st Main, Bangalore\",\n      \"partyType\": \"PLAINTIFF\",\n      \"guardianIndex\": 0\n    }\n  ],\n  \"defendants\": [\n    {\n      \"name\": \"Ravi Kumar\",\n      \"relation\": \"Defendant\",\n      \"gender\": \"Male\",\n      \"age\": 33,\n      \"occupation\": \"Contractor\",\n      \"address\": \"2nd Cross, Mysore\",\n      \"partyType\": \"DEFENDANT\",\n      \"guardianIndex\": 0\n    }\n  ],\n  \"property\": [\n    {\n      \"type\": \"Residential\",\n      \"mkvalue\": \"Apartment\",\n      \"extent\": \"1200 sq.ft\",\n      \"syn\": \"NA\",\n      \"hn\": \"H-77\",\n      \"plotNo\": \"12B\"\n    }\n  ],\n  \"suitType\": \"civil\",\n  \"relief\": \"Compensation\",\n  \"affiantIndex\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/insert",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "insert"
+          ]
+        }
+      }
+    },
+    {
+      "name": "generate document",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"suitDto\": {\n    \"id\": 1,\n    \"court\": \"District Court\",\n    \"city\": \"Bangalore\",\n    \"lawyer\": \"Advocate Rao\",\n    \"plaintiffs\": [\n      {\n        \"name\": \"Anita Sharma\",\n        \"relation\": \"Plaintiff\",\n        \"gender\": \"Female\",\n        \"age\": 29,\n        \"occupation\": \"Teacher\",\n        \"address\": \"1st Main, Bangalore\",\n        \"partyType\": \"PLAINTIFF\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"defendants\": [\n      {\n        \"name\": \"Ravi Kumar\",\n        \"relation\": \"Defendant\",\n        \"gender\": \"Male\",\n        \"age\": 33,\n        \"occupation\": \"Contractor\",\n        \"address\": \"2nd Cross, Mysore\",\n        \"partyType\": \"DEFENDANT\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"property\": [\n      {\n        \"type\": \"Residential\",\n        \"mkvalue\": \"Apartment\",\n        \"extent\": \"1200 sq.ft\",\n        \"syn\": \"NA\",\n        \"hn\": \"H-77\",\n        \"plotNo\": \"12B\"\n      }\n    ],\n    \"suitType\": \"civil\",\n    \"relief\": \"Compensation\",\n    \"affiantIndex\": \"1\"\n  },\n  \"documents\": [\n    \"plaint\",\n    \"affidavit\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/generate",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "generate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "handshake",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:9090/auth",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "auth"
+          ]
+        }
+      }
+    },
+    {
+      "name": "initialize document draft",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"documentType\": \"default_civil_suit\",\n  \"suitDto\": {\n    \"id\": 1,\n    \"court\": \"District Court\",\n    \"city\": \"Bangalore\",\n    \"lawyer\": \"Advocate Rao\",\n    \"plaintiffs\": [\n      {\n        \"name\": \"Anita Sharma\",\n        \"relation\": \"Plaintiff\",\n        \"gender\": \"Female\",\n        \"age\": 29,\n        \"occupation\": \"Teacher\",\n        \"address\": \"1st Main, Bangalore\",\n        \"partyType\": \"PLAINTIFF\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"defendants\": [\n      {\n        \"name\": \"Ravi Kumar\",\n        \"relation\": \"Defendant\",\n        \"gender\": \"Male\",\n        \"age\": 33,\n        \"occupation\": \"Contractor\",\n        \"address\": \"2nd Cross, Mysore\",\n        \"partyType\": \"DEFENDANT\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"property\": [\n      {\n        \"type\": \"Residential\",\n        \"mkvalue\": \"Apartment\",\n        \"extent\": \"1200 sq.ft\",\n        \"syn\": \"NA\",\n        \"hn\": \"H-77\",\n        \"plotNo\": \"12B\"\n      }\n    ],\n    \"suitType\": \"civil\",\n    \"relief\": \"Compensation\",\n    \"affiantIndex\": \"1\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/api/documents/initialize",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "api",
+            "documents",
+            "initialize"
+          ]
+        }
+      }
+    },
+    {
+      "name": "list suits",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:9090/suits",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "suits"
+          ]
+        }
+      }
+    },
+    {
+      "name": "preview document section",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"draftId\": \"3da3cfc8-c686-4b2d-847b-85859a9dd5e6\",\n  \"documentType\": \"default_civil_suit\",\n  \"sectionKey\": \"FACTS\",\n  \"conversationHistory\": \"User: Add details about the dispute.\\nAI: ...\",\n  \"suitDto\": {\n    \"id\": 1,\n    \"court\": \"District Court\",\n    \"city\": \"Bangalore\",\n    \"lawyer\": \"Advocate Rao\",\n    \"plaintiffs\": [\n      {\n        \"name\": \"Anita Sharma\",\n        \"relation\": \"Plaintiff\",\n        \"gender\": \"Female\",\n        \"age\": 29,\n        \"occupation\": \"Teacher\",\n        \"address\": \"1st Main, Bangalore\",\n        \"partyType\": \"PLAINTIFF\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"defendants\": [\n      {\n        \"name\": \"Ravi Kumar\",\n        \"relation\": \"Defendant\",\n        \"gender\": \"Male\",\n        \"age\": 33,\n        \"occupation\": \"Contractor\",\n        \"address\": \"2nd Cross, Mysore\",\n        \"partyType\": \"DEFENDANT\",\n        \"guardianIndex\": 0\n      }\n    ],\n    \"property\": [\n      {\n        \"type\": \"Residential\",\n        \"mkvalue\": \"Apartment\",\n        \"extent\": \"1200 sq.ft\",\n        \"syn\": \"NA\",\n        \"hn\": \"H-77\",\n        \"plotNo\": \"12B\"\n      }\n    ],\n    \"suitType\": \"civil\",\n    \"relief\": \"Damages\",\n    \"affiantIndex\": \"1\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/api/documents/sections/preview",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "api",
+            "documents",
+            "sections",
+            "preview"
+          ]
+        }
+      }
+    },
+    {
+      "name": "save suit",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"court\": \"High Court\",\n  \"city\": \"Mumbai\",\n  \"lawyer\": \"Advocate Singh\",\n  \"plaintiffs\": [\n    {\n      \"name\": \"Rohan Sharma\",\n      \"relation\": \"Plaintiff\",\n      \"gender\": \"Male\",\n      \"age\": 35,\n      \"occupation\": \"Engineer\",\n      \"address\": \"101 Marine Drive, Mumbai\",\n      \"partyType\": \"PLAINTIFF\",\n      \"guardianIndex\": 0\n    }\n  ],\n  \"defendants\": [\n    {\n      \"name\": \"Nilesh Desai\",\n      \"relation\": \"Defendant\",\n      \"gender\": \"Male\",\n      \"age\": 40,\n      \"occupation\": \"Businessman\",\n      \"address\": \"202 Colaba, Mumbai\",\n      \"partyType\": \"DEFENDANT\",\n      \"guardianIndex\": 0\n    }\n  ],\n  \"property\": [\n    {\n      \"type\": \"Land\",\n      \"mkvalue\": \"Downtown Plot\",\n      \"extent\": \"500 sq.ft\",\n      \"syn\": \"NA\",\n      \"hn\": \"H123\",\n      \"plotNo\": \"P-45\"\n    }\n  ],\n  \"suitType\": \"civil\",\n  \"relief\": \"Injunction\",\n  \"affiantIndex\": \"1\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:9090/save",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "save"
+          ]
+        }
+      }
+    },
+    {
+      "name": "template",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:9090/api/documents/templates/default_civil_suit",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "api",
+            "documents",
+            "templates",
+            "default_civil_suit"
+          ]
+        }
+      }
+    },
+    {
+      "name": "user suits",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:9090/user?lawyer=Advocate%20Rao",
+          "host": [
+            "localhost"
+          ],
+          "port": "9090",
+          "path": [
+            "user"
+          ],
+          "query": [
+            {
+              "key": "lawyer",
+              "value": "Advocate Rao"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "protocolProfileBehavior": {}
+}

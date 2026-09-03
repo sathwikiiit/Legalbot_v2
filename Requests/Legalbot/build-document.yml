@@ -1,0 +1,35 @@
+info:
+  name: build document
+  type: http
+
+http:
+  method: POST
+  url: http://localhost:9090/api/documents/build
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "draftId": "draft-123",
+        "sectionKey": "caseBackground",
+        "renderContexts": [
+          {
+            "sectionKey": "caseBackground",
+            "definitionKey": "backgroundText",
+            "context": "Case facts and dispute details.",
+            "value": "The defendant breached the lease agreement.",
+            "order": 1,
+            "sourceType": "STATIC",
+            "editable": true
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,56 +1,44 @@
-<h3>Property {{id}}</h3>
-  <ng-container [ngSwitch]="property.get('type')?.value">
-    <div *ngSwitchCase="'Land'" class="Property" [formGroup]="property">
-      <label for="{{id}}.Propertytype">Property Type:</label>
-      <select id="{{id}}.Propertytype" formControlName="type">
-        <option>Land</option>
-        <option>Plot</option>
-        <option>House</option>
-      </select>    
-      <label for="{{id}}.syn">Sy.No.</label>
-      <input class="input" id="{{id}}.syn" formControlName="syn">
-      <label for="{{id}}.extent">Extent</label>
-      <input [ngStyle]="{'border-color': property.get('extent')?.valid && property.get('extent')?.touched ? 'red' : '#ccc'}" class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Ac.}-{gts.}">
-      <label for="{{id}}.value">Market Value</label>
-      <input class="input" id="{{id}}.value" formControlName="value">
-    </div>
-    <div *ngSwitchCase="'Plot'" class="Property" [formGroup]="property">
-      <label for="{{id}}.Propertytype">Property Type:</label>
-      <select id="{{id}}.Propertytype" formControlName="type">
-        <option>Land</option>
-        <option>Plot</option>
-        <option>House</option>
-      </select>    
-      <label for="{{id}}.syn">Sy.No.:</label>
-      <input class="input" id="{{id}}.syn" formControlName="syn">
-      <label for="{{id}}.plotNo">Plot.No.:</label>
-      <input class="input" id="{{id}}.plotNo" formControlName="plotNo">
-      <label for="{{id}}.extent">Extent</label>
-      <input class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Yards}">
-      <label for="{{id}}.value">Market Value</label>
-      <input class="input" id="{{id}}.value" formControlName="value">
-    </div>
-    <div *ngSwitchCase="'House'" class="Property" [formGroup]="property">
-      <label for="{{id}}.Propertytype">Property Type:</label>
-      <select id="{{id}}.Propertytype" formControlName="type">
-        <option>Land</option>
-        <option>Plot</option>
-        <option>House</option>
-      </select>    
-      <label for="{{id}}.hn">H.No.</label>
-      <input class="input" id="{{id}}.hn" formControlName="hn">
-      <label for="{{id}}.extent">Extent</label>
-      <input class="input" id="{{id}}.extent" formControlName="extent" placeholder="{Yards}">
-      <label for="{{id}}.value">Market Value</label>
-      <input class="input" id="{{id}}.value" formControlName="value">
-    </div>
-    <div *ngSwitchDefault class="Property" [formGroup]="property">
-      <label for="{{id}}.Propertytype">Property Type:</label>
-      <select id="{{id}}.Propertytype" formControlName="type">
-        <option>Land</option>
-        <option>Plot</option>
-        <option>House</option>
+<div class="party-card" [formGroup]="property">
+  <div class="party-card-header">
+    <h4>Property Item #{{ id }}</h4>
+    <button type="button" (click)="remove(id)" class="btn btn-danger btn-sm">Remove</button>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label class="form-label" for="prop-type-{{id}}">Property Category *</label>
+      <select [id]="'prop-type-' + id" formControlName="type" class="form-control">
+        <option value="">Select Category</option>
+        <option value="Land">Agricultural Land</option>
+        <option value="Plot">Open Plot / Site</option>
+        <option value="House">Residential House / Building</option>
+        <option value="Commercial">Commercial Shop / Premises</option>
       </select>
     </div>
-  </ng-container>
-  <button (click)="remove(id)">Remove</button>
+
+    <div class="form-group">
+      <label class="form-label" for="prop-val-{{id}}">Market Value (Rs.)</label>
+      <input type="text" [id]="'prop-val-' + id" formControlName="mkvalue" placeholder="e.g. 25,00,000" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="prop-extent-{{id}}">Extent / Area</label>
+      <input type="text" [id]="'prop-extent-' + id" formControlName="extent" placeholder="e.g. Ac. 2.50 gts or 250 Sq.Yds" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="prop-syn-{{id}}">Survey No / Sy.No</label>
+      <input type="text" [id]="'prop-syn-' + id" formControlName="syn" placeholder="e.g. 142/A" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="prop-hn-{{id}}">House / Door No</label>
+      <input type="text" [id]="'prop-hn-' + id" formControlName="hn" placeholder="e.g. H.No 4-12-89" class="form-control" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="prop-plot-{{id}}">Plot No</label>
+      <input type="text" [id]="'prop-plot-' + id" formControlName="plotNo" placeholder="e.g. Plot No 42" class="form-control" />
+    </div>
+  </div>
+</div>

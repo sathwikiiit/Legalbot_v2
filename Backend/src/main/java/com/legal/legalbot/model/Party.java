@@ -31,7 +31,7 @@ public class Party {
     private String context;
 
     @ManyToOne
-    @JsonBackReference(value = "suit-plaintiffs")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Suit suit;
 
     // Default constructor

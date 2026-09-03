@@ -112,17 +112,17 @@ public class RenderDefinitionRegistry {
 
         definitions.put("FACTS", (context, document) -> {
             String facts = context.getContext();
-            createListItem(document, facts, "FACTS");
+            createListItem(document, facts, "FACTS", true);
         });
 
         definitions.put("RELIEF", (context, document) -> {
             String relief = context.getContext();
-            createListItem(document, relief, "RELIEF");
+            createListItem(document, relief, "RELIEF", false);
         });
     }
 
-    private void createListItem(XWPFDocument document, String text, String listType) {
-        BigInteger numId = listNumIds.computeIfAbsent(listType, key -> createBulletList(document));
+    private void createListItem(XWPFDocument document, String text, String listType, boolean numbered) {
+        BigInteger numId = listNumIds.computeIfAbsent(listType, key -> createList(document, numbered));
         XWPFParagraph paragraph = document.createParagraph();
         paragraph.setNumID(numId);
         paragraph.setAlignment(ParagraphAlignment.BOTH);
@@ -130,13 +130,13 @@ public class RenderDefinitionRegistry {
         run.setText(text);
     }
 
-    private BigInteger createBulletList(XWPFDocument document) {
+    private BigInteger createList(XWPFDocument document, boolean numbered) {
         XWPFNumbering numbering = document.createNumbering();
         CTAbstractNum abstractNum = CTAbstractNum.Factory.newInstance();
         CTLvl lvl = abstractNum.addNewLvl();
         lvl.setIlvl(BigInteger.ZERO);
-        lvl.addNewNumFmt().setVal(STNumberFormat.BULLET);
-        lvl.addNewLvlText().setVal("•");
+        lvl.addNewNumFmt().setVal(numbered ? STNumberFormat.DECIMAL : STNumberFormat.BULLET);
+        lvl.addNewLvlText().setVal(numbered ? "%1." : "•");
 
         return numbering.addNum(numbering.addAbstractNum(new XWPFAbstractNum(abstractNum)));
     }

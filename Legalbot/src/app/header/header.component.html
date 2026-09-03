@@ -1,6 +1,62 @@
-<img src="icon.png">
-<h1><a [routerLink]="['/dashboard']">LegalBot</a></h1>
-<div *ngIf="disabled" class="user">
-    <p>{{fetcher.user}}</p>
-    <p>{{suits?.length}}</p>
-</div>
+<header class="app-header">
+  <div class="header-inner">
+
+    <!-- Brand -->
+    <a routerLink="/dashboard" class="brand-link">
+      <div class="brand-logo">
+        <!-- Scale / Gavel SVG -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3 10 9H2l6.5 4.7L6 20l6-4.3L18 20l-2.5-6.3L22 9h-8L12 3z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">LEGALBOT</span>
+        <span class="brand-sub">AI DRAFTMASTER</span>
+      </div>
+    </a>
+
+    <!-- Nav -->
+    <nav class="header-nav">
+      <a routerLink="/dashboard" routerLinkActive="nav-active" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <rect width="7" height="9" x="3" y="3" rx="1"/>
+          <rect width="7" height="5" x="14" y="3" rx="1"/>
+          <rect width="7" height="9" x="14" y="12" rx="1"/>
+          <rect width="7" height="5" x="3" y="16" rx="1"/>
+        </svg>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/newsuit" routerLinkActive="nav-active" class="nav-item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        <span>New Suit</span>
+      </a>
+
+      <a routerLink="/document-draft" routerLinkActive="nav-active" class="nav-item nav-item-pro">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <path d="M12 18v-6M9 15l3 3 3-3"/>
+        </svg>
+        <span>AI Studio</span>
+        <span class="pro-badge">PRO</span>
+      </a>
+    </nav>
+
+    <!-- User pill -->
+    <div class="user-pill">
+      <div class="user-avatar">{{ (fetcher.user || 'A').charAt(0).toUpperCase() }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ fetcher.user || 'Advocate' }}</span>
+        <span class="user-role">Legal Counsel</span>
+      </div>
+    </div>
+
+  </div>
+</header>

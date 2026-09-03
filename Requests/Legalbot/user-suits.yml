@@ -1,0 +1,17 @@
+info:
+  name: user suits
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:9090/user
+  auth: inherit
+  params:
+    - name: lawyer
+      value: Advocate Rao
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

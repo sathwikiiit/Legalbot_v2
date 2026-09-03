@@ -1,0 +1,63 @@
+info:
+  name: save suit
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:9090/save
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "court": "High Court",
+        "city": "Mumbai",
+        "lawyer": "Advocate Singh",
+        "plaintiffs": [
+          {
+            "name": "Rohan Sharma",
+            "relation": "Plaintiff",
+            "gender": "Male",
+            "age": 35,
+            "occupation": "Engineer",
+            "address": "101 Marine Drive, Mumbai",
+            "partyType": "PLAINTIFF",
+            "guardianIndex": 0
+          }
+        ],
+        "defendants": [
+          {
+            "name": "Nilesh Desai",
+            "relation": "Defendant",
+            "gender": "Male",
+            "age": 40,
+            "occupation": "Businessman",
+            "address": "202 Colaba, Mumbai",
+            "partyType": "DEFENDANT",
+            "guardianIndex": 0
+          }
+        ],
+        "property": [
+          {
+            "type": "Land",
+            "mkvalue": "Downtown Plot",
+            "extent": "500 sq.ft",
+            "syn": "NA",
+            "hn": "H123",
+            "plotNo": "P-45"
+          }
+        ],
+        "suitType": "civil",
+        "relief": "Injunction",
+        "affiantIndex": "1"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

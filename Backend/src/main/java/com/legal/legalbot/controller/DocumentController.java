@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,7 @@ import com.legal.legalbot.services.document.DocumentWorkflowService;
 @RequestMapping("/api/documents")
 public class DocumentController {
 
+    private static final Logger logger = LoggerFactory.getLogger(DocumentController.class);
     private final DocumentTemplateService templateService;
     private final DocumentWorkflowService workflowService;
     private final DocumentDraftService draftService;
@@ -61,6 +64,7 @@ public class DocumentController {
 
     @PostMapping("/initialize")
     public InitializeDocumentResponse initializeDraft(@RequestBody InitializeDocumentRequest request) {
+        logger.info("Initializing document draft for type={} and lawyer={}", request.getDocumentType(), request.getSuitDto() == null ? "<none>" : request.getSuitDto().getLawyer());
         String draftId = workflowService.initializeDraft(request.getDocumentType(), request.getSuitDto());
         Map<String, List<RenderContextDto>> sectionContexts = new HashMap<>();
         DocumentTemplateDto template = templateService.getTemplate(request.getDocumentType());
@@ -75,13 +79,16 @@ public class DocumentController {
         response.setDraftId(draftId);
         response.setTemplate(template);
         response.setInitialSectionContexts(sectionContexts);
+        logger.info("Document draft initialized draftId={}", draftId);
         return response;
     }
 
     @PostMapping("/sections/preview")
     public SectionPreviewResponse previewSection(@RequestBody SectionPreviewRequest request) {
+        logger.info("Previewing section={} for documentType={} draftId={}", request.getSectionKey(), request.getDocumentType(), request.getDraftId());
         SectionPreviewResponse response = new SectionPreviewResponse();
         if ("AI" .equalsIgnoreCase(getSectionSourceType(request))) {
+            logger.info("Section {} is AI-driven", request.getSectionKey());
             AiStepRequest aiRequest = new AiStepRequest();
             aiRequest.setDraftId(request.getDraftId());
             aiRequest.setDocumentType(request.getDocumentType());
@@ -93,6 +100,7 @@ public class DocumentController {
             response.setTaskResult(result);
             response.setRenderContexts(result.getRenderContexts());
         } else {
+            logger.info("Section {} is static", request.getSectionKey());
             response.setRenderContexts(workflowService.getStaticSectionContexts(request.getSectionKey(), request.getSuitDto()));
         }
         return response;
@@ -105,7 +113,18 @@ public class DocumentController {
 
     @PostMapping("/ai/step")
     public TaskResultDto aiStep(@RequestBody AiStepRequest request) {
-        return workflowService.runAiSection(request);
+        logger.info("Invoking AI step taskKey={} for draftId={}", request.getTaskKey(), request.getDraftId());
+        TaskResultDto result = workflowService.runAiSection(request);
+        logger.info("AI step taskKey={} completed with status={}", request.getTaskKey(), result.getStatus());
+        return result;
+    }
+
+    @PostMapping("/ai/step/keyvalue")
+    public TaskResultDto aiStepKeyValue(@RequestBody AiStepRequest request) {
+        logger.info("Invoking AI Key-Value step taskKey={} for draftId={}", request.getTaskKey(), request.getDraftId());
+        TaskResultDto result = workflowService.runAiSectionKeyValue(request);
+        logger.info("AI Key-Value step taskKey={} completed with status={}", request.getTaskKey(), result.getStatus());
+        return result;
     }
 
     @PostMapping("/build")

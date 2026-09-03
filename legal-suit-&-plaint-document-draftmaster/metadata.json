@@ -1,0 +1,6 @@
+{
+  "name": "Legal Suit & Plaint Document Draftmaster",
+  "description": "AI & Rule-based legal document drafting application for advocates to draft plaints, petitions, and court suits section-by-section with PDF/DOCX build.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

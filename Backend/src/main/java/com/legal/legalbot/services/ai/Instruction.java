@@ -1,12 +1,12 @@
 package com.legal.legalbot.services.ai;
 
-public class Prompt {
+public class Instruction {
 
     private final String name;
     private final String description;
     private final String template;
 
-    private Prompt(String name, String description, String template) {
+    private Instruction(String name, String description, String template) {
         this.name = name;
         this.description = description;
         this.template = template;
@@ -48,8 +48,8 @@ public class Prompt {
             return this;
         }
 
-        public Prompt build() {
-            return new Prompt(name, description, template);
+        public Instruction build() {
+            return new Instruction(name, description, template);
         }
     }
 }

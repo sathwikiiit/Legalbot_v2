@@ -1,62 +1,89 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Suit, SuitDto } from '../suit';
+import { SuitDto, GenerateRequest } from '../suit';
 import { FetcherService } from '../services/fetcher.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
-    selector: 'app-verification',
-    imports: [RouterLink, CommonModule, FormsModule],
-    templateUrl: './verification.component.html',
-    styleUrl: './verification.component.css'
+  selector: 'app-verification',
+  standalone: true,
+  imports: [RouterLink, CommonModule, FormsModule],
+  templateUrl: './verification.component.html',
+  styleUrl: './verification.component.css'
 })
-export class VerificationComponent implements OnInit{
-  @Input()
-  id!: number;
-  suit: SuitDto|undefined;
-  items: any;
-  constructor(private fetcher:FetcherService, private http: HttpClient){}
+export class VerificationComponent implements OnInit {
+  @Input() id!: number;
+  suit: SuitDto | undefined;
+  items = {
+    notice: true,
+    ver_aff: true,
+    summons: false,
+    add_aff: false
+  };
+  isGenerating: boolean = false;
+
+  constructor(
+    private fetcher: FetcherService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
-    this.fetcher.fetchsuitbyid(this.id).subscribe((val: SuitDto)=>{this.suit=val})
-    this.items={notice:false,ver_aff:false,summons:false,add_aff:false,suit:false}
+    // Read route param id if @Input id is not provided
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const targetId = this.id || (routeId ? Number(routeId) : null);
+
+    if (targetId) {
+      this.fetcher.fetchsuitbyid(targetId).subscribe({
+        next: (val: SuitDto) => {
+          this.suit = val;
+        },
+        error: (err) => console.error('Error fetching suit details', err)
+      });
+    }
   }
+
   generate() {
     if (!this.suit) return;
-    // Collect selected docs
+    this.isGenerating = true;
+
     const required_docs: string[] = [];
     if (this.items.notice) required_docs.push('Notice');
     if (this.items.summons) required_docs.push('Summons');
     if (this.items.ver_aff) required_docs.push('Verification Affidavit');
     if (this.items.add_aff) required_docs.push('Address Affidavit');
-    // POST to backend /generate and trigger download
-    const payload = {
+
+    const payload: GenerateRequest = {
       suitDto: this.suit,
       documents: required_docs
     };
-    this.http.post(
-      '/generate',
-      payload,
-      { responseType: 'blob' }
-    ).subscribe((blob: Blob) => {
-      // Use browser download
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'Legalbot_Document.docx';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+
+    this.fetcher.generateDocument(payload).subscribe({
+      next: (blob: Blob) => {
+        this.isGenerating = false;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Legalbot_Suit_${this.suit?.id || 'Doc'}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error generating document', err);
+        this.isGenerating = false;
+        alert('Document generation failed.');
+      }
     });
   }
-  getPlaintiffs() {
-    return this.suit?.plaintiffs || [];
-  }
 
-  getDefendants() {
-    return this.suit?.defendants || [];
+  openStudio() {
+    if (this.suit?.id) {
+      this.router.navigate(['/document-draft'], { queryParams: { suitId: this.suit.id } });
+    } else {
+      this.router.navigate(['/document-draft']);
+    }
   }
-
 }

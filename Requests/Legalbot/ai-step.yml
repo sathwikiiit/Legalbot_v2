@@ -1,0 +1,71 @@
+info:
+  name: ai step
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:9090/api/documents/ai/step
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "draftId": "draft-123",
+        "documentType": "default_civil_suit",
+        "sectionKey": "caseBackground",
+        "taskKey": "generateBackground",
+        "conversationHistory": "User: Provide a concise background statement.",
+        "suitDto": {
+          "id": 1,
+          "court": "District Court",
+          "city": "Bangalore",
+          "lawyer": "Advocate Rao",
+          "plaintiffs": [
+            {
+              "name": "Anita Sharma",
+              "relation": "Plaintiff",
+              "gender": "Female",
+              "age": 29,
+              "occupation": "Teacher",
+              "address": "1st Main, Bangalore",
+              "partyType": "PLAINTIFF",
+              "guardianIndex": 0
+            }
+          ],
+          "defendants": [
+            {
+              "name": "Ravi Kumar",
+              "relation": "Defendant",
+              "gender": "Male",
+              "age": 33,
+              "occupation": "Contractor",
+              "address": "2nd Cross, Mysore",
+              "partyType": "DEFENDANT",
+              "guardianIndex": 0
+            }
+          ],
+          "property": [
+            {
+              "type": "Residential",
+              "mkvalue": "Apartment",
+              "extent": "1200 sq.ft",
+              "syn": "NA",
+              "hn": "H-77",
+              "plotNo": "12B"
+            }
+          ],
+          "suitType": "civil",
+          "relief": "Damages",
+          "affiantIndex": "1"
+        }
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

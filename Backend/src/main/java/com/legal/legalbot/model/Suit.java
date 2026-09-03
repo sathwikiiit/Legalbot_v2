@@ -26,18 +26,16 @@ public class Suit {
     private String court;
     private String city;
 
-    @OneToMany(mappedBy = "suit", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "suit-advocates")
+    @OneToMany(mappedBy = "suit", cascade = CascadeType.ALL, orphanRemoval = true, fetch = jakarta.persistence.FetchType.EAGER)
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("suit")
     private List<Advocate> advocates = new ArrayList<>();
 
     @JoinColumn(name = "suit_id")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "suit-plaintiffs")
+    @OneToMany(cascade = CascadeType.ALL, fetch = jakarta.persistence.FetchType.EAGER)
     private List<Party> plaintiffs;
 
     @JoinColumn(name = "suit_id")
-    @OneToMany(cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "suit-defendants")
+    @OneToMany(cascade = CascadeType.ALL, fetch = jakarta.persistence.FetchType.EAGER)
     private List<Party> defendants;
     private Date date;
     private String context;
@@ -54,9 +52,8 @@ public class Suit {
         this.date = date;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = jakarta.persistence.FetchType.EAGER)
     @JoinColumn(name = "suit_id")
-    @JsonManagedReference(value = "suit-property")
     private List<Property> property;
 
     private String suitType;

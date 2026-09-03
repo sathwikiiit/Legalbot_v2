@@ -1,16 +1,84 @@
+<div class="login-page">
+  <!-- Animated background particles -->
+  <div class="login-bg">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+  </div>
 
-<form [@buttonState]="isLoading ? 'loading' : 'normal'" (ngSubmit)="Login($event)">
-    <h3>Enter your login credentials</h3>
-    <h3 style="color: red;" [hidden]="check">Please check credentials</h3>
-    <label for="first">
-        Username:
-    </label>
-    <input type="text" id="first" name="first" 
-    [(ngModel)]="Username" placeholder="Enter your Username" required>
-    <label for="password">
-        Password:
-    </label>
-    <input type="password" id="password" name="password" 
-    [(ngModel)]="password" placeholder="Enter your Password" required>       
-    <button type="submit">Login</button>
-</form>
+  <div class="login-card animate-fade-in">
+
+    <!-- Brand -->
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m14 13-7.5 7.5c-.83.83-2.17.83-3 0a2.12 2.12 0 0 1 0-3L11 10"/>
+          <path d="m16 16 6-6"/><path d="m8 8 6-6"/>
+          <path d="m9 7 8 8"/><path d="m21 11-8-8"/>
+        </svg>
+      </div>
+      <h1 class="login-title">LEGALBOT</h1>
+      <p class="login-subtitle">AI Document Automation Portal</p>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" *ngIf="!check">
+      ⚠️ Invalid credentials. Please check your username and password.
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="Login($event)" class="login-form">
+      <div class="form-group">
+        <label class="form-label" for="username">Advocate Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="Username"
+          placeholder="e.g. advocate"
+          required
+          class="form-control"
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="••••••••"
+          required
+          class="form-control"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-full login-btn">
+        <svg *ngIf="!isLoading" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <svg *ngIf="isLoading" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        {{ isLoading ? 'Authenticating...' : 'Access Portal' }}
+      </button>
+    </form>
+
+    <!-- Demo credentials -->
+    <div class="demo-creds">
+      <span class="demo-label">💡 Demo:</span>
+      <code>advocate</code> / <code>pass</code>
+      &nbsp;&nbsp;or&nbsp;&nbsp;
+      <code>admin</code> / <code>admin</code>
+    </div>
+
+  </div>
+</div>

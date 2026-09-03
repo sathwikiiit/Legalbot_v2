@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +32,9 @@ import com.legal.legalbot.services.SuitService;
     
 @RestController
 public class Controller {
+    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
     private final SuitService suitService;
 
-    @Autowired
     public Controller(SuitService suitService) {
         this.suitService = suitService;
     }
@@ -85,13 +86,14 @@ public class Controller {
     }
     @PostMapping("/save")
     public boolean saveSuit(@RequestBody SuitDto suitDto) {
+        logger.info("Saving suit for lawyer={}", suitDto.getLawyer());
         try{
             suitDto.setDate(new Date());
             suitService.saveSuit(suitDto);
+            logger.info("Suit saved successfully for lawyer={}", suitDto.getLawyer());
             return true;
         } catch (Exception e) {
-            System.err.println("Error saving suit: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error saving suit", e);
             return false;
         }
     }

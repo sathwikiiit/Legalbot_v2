@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.legal.legalbot.dto.ai.FactsResponse;
 import com.legal.legalbot.dto.ai.ReliefResponse;
+import com.legal.legalbot.model.Suit;
 
 @Component
 public class AIRegistry {
@@ -22,11 +23,14 @@ public class AIRegistry {
         tasks.put(
             "FACTS",
             new AITask<>(
-                Prompt.newBuilder()
+                Instruction.newBuilder()
                     .name("facts")
                     .description("Generate facts for a civil plaint.")
                     .build(),
                 FactsResponse.class,
+                true,
+                Suit.class,
+                Object.class,
                 true
             )
         );
@@ -34,11 +38,14 @@ public class AIRegistry {
         tasks.put(
             "RELIEF",
             new AITask<>(
-                Prompt.newBuilder()
+                Instruction.newBuilder()
                     .name("relief")
                     .description("Generate reliefs.")
                     .build(),
                 ReliefResponse.class,
+                true,
+                Suit.class,
+                Object.class,
                 true
             )
         );

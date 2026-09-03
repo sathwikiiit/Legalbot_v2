@@ -1,5 +1,6 @@
 package com.legal.legalbot.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.legal.legalbot.model.Suit;
@@ -26,8 +27,29 @@ public class SuitDto {
         dto.setCourt(suit.getCourt());
         dto.setCity(suit.getCity());
         dto.setLawyer(suit.getLawyer());
-        dto.setPlaintiffs(PartyDto.fromEntityList(suit.getPlaintiffs()));
-        dto.setDefendants(PartyDto.fromEntityList(suit.getDefendants()));
+
+        List<PartyDto> allPfs = PartyDto.fromEntityList(suit.getPlaintiffs());
+        List<PartyDto> pfs = new ArrayList<>();
+        if (allPfs != null) {
+            for (PartyDto p : allPfs) {
+                if (p != null && (p.getPartyType() == null || "PLAINTIFF".equalsIgnoreCase(p.getPartyType()))) {
+                    pfs.add(p);
+                }
+            }
+        }
+        dto.setPlaintiffs(pfs);
+
+        List<PartyDto> allDfs = PartyDto.fromEntityList(suit.getDefendants());
+        List<PartyDto> dfs = new ArrayList<>();
+        if (allDfs != null) {
+            for (PartyDto d : allDfs) {
+                if (d != null && "DEFENDANT".equalsIgnoreCase(d.getPartyType())) {
+                    dfs.add(d);
+                }
+            }
+        }
+        dto.setDefendants(dfs);
+
         dto.setProperty(PropertyDto.fromEntityList(suit.getProperty()));
         dto.setDate(suit.getDate());
         dto.setSuitType(suit.getSuitType());

@@ -12,9 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:4200", "https://legalbot-v2.vercel.app")
-            .allowedMethods("GET", "POST", "OPTIONS")
-            .allowedHeaders("Content-Type", "Authorization", "X-Requested-With")
+            .allowedOriginPatterns("*")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+            .allowedHeaders("*")
             .allowCredentials(true);
     }
 

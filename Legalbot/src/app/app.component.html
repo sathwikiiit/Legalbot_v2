@@ -1,3 +1,4 @@
-<header [disabled]="change()"></header>
-<div class ="main"><router-outlet></router-outlet></div>
-<footer></footer>
+<app-header *ngIf="showHeader"></app-header>
+<main [class.with-header]="showHeader">
+  <router-outlet />
+</main>

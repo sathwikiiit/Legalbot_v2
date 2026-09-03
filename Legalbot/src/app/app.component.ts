@@ -1,23 +1,24 @@
-import { Component, OnInit} from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
+import { filter } from 'rxjs/operators';
+
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, RouterModule, HeaderComponent, FooterComponent],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css'
+  selector: 'app-root',
+  imports: [RouterOutlet, CommonModule, HeaderComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
+  showHeader = false;
   title = 'Legalbot';
-  disabled: boolean=false;
-  Username:string="";
-  constructor(){
+
+  constructor(private router: Router) {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd)
+    ).subscribe((e: any) => {
+      this.showHeader = !e.urlAfterRedirects.startsWith('/login');
+    });
   }
-  ngOnInit(): void {
-  }
-  change(): Boolean {
-    return true
-    }
-    
 }

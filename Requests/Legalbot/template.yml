@@ -1,0 +1,14 @@
+info:
+  name: template
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:9090/api/documents/templates/default_civil_suit
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

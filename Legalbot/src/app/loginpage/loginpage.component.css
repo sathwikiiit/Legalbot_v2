@@ -1,38 +1,140 @@
-form{
-    margin:10px auto;
-    width: 600px;
-    padding: 20px;
+/* ===== LOGIN PAGE ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--bg-dark);
+  position: relative;
+  overflow: hidden;
 }
 
-label, input {
-	display: block;
-	width: 100%;
-	text-align: left;
-}
-label {
-	color: #555;
-	font-weight: bold;
-	margin-top: 20px;
-	margin-bottom: 5px;
+/* Background animated orbs */
+.login-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-input[type=text],input[type=password] ,textarea {
-	padding: 10px;
-	box-sizing: border-box;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	margin-bottom: 20px;
-}
-input[type=text]:focus,textarea:focus {
-	background-color: aquamarine;
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+  animation: orbFloat 8s ease-in-out infinite;
 }
 
-button {
-	border: none;
-	padding: 15px;
-	border-radius: 5px;
-	color: white;
-	background-color: green;
-	width: 100%;
+.orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
+  top: -200px; left: -150px;
+  animation-delay: 0s;
+}
+.orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #1e40af 0%, transparent 70%);
+  bottom: -180px; right: -120px;
+  animation-delay: 3s;
+}
+.orb-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+  top: 50%; left: 60%;
+  animation-delay: 5s;
 }
 
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(20px, -30px) scale(1.05); }
+  66%       { transform: translate(-15px, 20px) scale(0.95); }
+}
+
+/* Login card */
+.login-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  background: rgba(20, 28, 46, 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.08),
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Brand */
+.login-brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #090d16;
+  margin: 0 auto 1rem;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+}
+
+.login-title {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold-lt);
+  margin-bottom: 4px;
+}
+
+.login-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.login-btn {
+  margin-top: 8px;
+  height: 44px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+/* Demo credentials */
+.demo-creds {
+  margin-top: 1.5rem;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.demo-label {
+  margin-right: 4px;
+}
+
+.demo-creds code {
+  background: rgba(245,158,11,0.1);
+  color: var(--accent-gold-lt);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+}

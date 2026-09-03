@@ -1,0 +1,214 @@
+<div class="page-container animate-fade-in">
+
+  <!-- Top Studio Control Bar -->
+  <div class="glass-card studio-header-card">
+    <div class="studio-title-wrap">
+      <span class="badge badge-ai">AI DRAFTING STUDIO</span>
+      <h2 class="studio-heading">Legal Document Draftmaster</h2>
+    </div>
+
+    <div class="controls-row">
+      <!-- Suit Select -->
+      <div class="control-item">
+        <label class="control-label">Court Suit Record:</label>
+        <select [(ngModel)]="selectedSuitId" (change)="onSuitSelect()" class="form-control control-select">
+          <option [ngValue]="null">-- Select Suit Record --</option>
+          <option *ngFor="let s of suits" [value]="s.id">
+            Suit #{{s.id}} - {{ (s.plaintiffs && s.plaintiffs.length > 0 ? s.plaintiffs[0].name : 'Plaintiff') }} vs {{ (s.defendants && s.defendants.length > 0 ? s.defendants[0].name : 'Defendant') }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Document Template Select -->
+      <div class="control-item">
+        <label class="control-label">Document Template:</label>
+        <select [(ngModel)]="selectedTemplateKey" (change)="onTemplateSelect()" class="form-control control-select">
+          <option value="PLAINT_RECOVERY">Plaint - Suit for Recovery of Money (Order XXXVII)</option>
+          <option value="PLAINT_INJUNCTION">Plaint - Suit for Permanent Injunction</option>
+          <option value="PLAINT_SPECIFIC_PERFORMANCE">Plaint - Specific Performance of Agreement</option>
+          <option value="EVICTION_PETITION">Eviction Petition & Rent Arrears</option>
+          <option *ngFor="let t of templates" [value]="t.templateKey">{{t.displayName}}</option>
+        </select>
+      </div>
+
+      <button (click)="initializeDraft()" [disabled]="isInitializing || !selectedTemplateKey" class="btn btn-primary">
+        <svg *ngIf="!isInitializing" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <svg *ngIf="isInitializing" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        {{ isInitializing ? 'Initializing...' : 'Re-initialize Plaint' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN DRAFTING WORKBENCH -->
+  <div *ngIf="draftId && template" class="drafting-workbench animate-fade-in">
+
+    <!-- SECTION STEPPER STRIP -->
+    <div class="glass-card stepper-bar">
+      <div class="stepper-scroll">
+        <button
+          *ngFor="let sec of sections; let i = index"
+          (click)="selectSection(sec.sectionKey)"
+          class="step-item"
+          [class.active-step]="sec.sectionKey === activeSectionKey"
+          [class.completed-step]="draftContexts[sec.sectionKey] && draftContexts[sec.sectionKey].length > 0"
+        >
+          <span class="step-num">{{ i + 1 }}</span>
+          <span class="step-title">{{ sec.title }}</span>
+          <span *ngIf="sec.sourceType === 'AI' || sec.sourceType === 'AI_GENERATED' || sec.interactive" class="badge badge-ai">AI</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SPLIT WORKBENCH GRID -->
+    <div class="workbench-split">
+
+      <!-- LEFT PANEL: AI CHAT & FORM EDITOR -->
+      <div class="glass-card left-panel">
+        <!-- Mode Tabs -->
+        <div class="panel-header-tabs">
+          <button class="panel-tab-btn" [class.active-tab]="activeMode === 'chat'" (click)="activeMode = 'chat'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            AI Assistant Chat
+          </button>
+          <button class="panel-tab-btn" [class.active-tab]="activeMode === 'edit'" (click)="activeMode = 'edit'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Context Form Editor
+          </button>
+        </div>
+
+        <!-- AI CHAT MODE -->
+        <div *ngIf="activeMode === 'chat'" class="chat-workspace">
+          <div class="chat-messages-scroll">
+            <div *ngFor="let msg of activeChatHistory" class="chat-msg-row" [class.user-row]="msg.sender === 'user'">
+              <div class="chat-avatar" [class.ai-avatar]="msg.sender === 'ai'" [class.user-avatar]="msg.sender === 'user'">
+                <span *ngIf="msg.sender === 'ai'">🤖</span>
+                <span *ngIf="msg.sender === 'user'">Adv</span>
+              </div>
+              <div class="chat-bubble" [class.ai-bubble]="msg.sender === 'ai'" [class.user-bubble]="msg.sender === 'user'" [class.question-bubble]="msg.isQuestion">
+                <p class="chat-text">{{ msg.text }}</p>
+                <span class="chat-time">{{ msg.timestamp }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="isLoadingAi" class="ai-typing">
+              <div class="dot-pulse"></div>
+              <span>AI Advocate is drafting clause...</span>
+            </div>
+          </div>
+
+          <div class="chat-input-bar">
+            <input
+              type="text"
+              [(ngModel)]="userPrompt"
+              (keyup.enter)="sendAiStep()"
+              placeholder="Type specific facts, amounts, dates or legal instructions for this clause..."
+              class="form-control chat-input"
+            />
+            <button (click)="sendAiStep()" [disabled]="isLoadingAi || !userPrompt.trim()" class="btn btn-primary btn-icon" title="Send Instruction">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- CONTEXT FORM EDITOR MODE -->
+        <div *ngIf="activeMode === 'edit'" class="editor-workspace">
+          <h4 class="editor-subheading">Render Parameters for "{{ activeSection?.title }}"</h4>
+
+          <div *ngIf="activeContexts.length === 0" class="empty-context">
+            <p>No render parameters yet. Click preview below or type instructions in AI Assistant.</p>
+            <button (click)="previewCurrentSection()" class="btn btn-secondary btn-sm">Preview Defaults</button>
+          </div>
+
+          <div *ngFor="let ctx of activeContexts; let idx = index" class="context-field-card">
+            <label class="form-label">{{ ctx.definitionKey || ctx.sectionKey || 'Key Parameter #' + (idx + 1) }}</label>
+            <textarea [(ngModel)]="ctx.value" rows="4" class="form-control context-textarea"></textarea>
+          </div>
+
+          <button *ngIf="activeContexts.length > 0" (click)="updateSectionContexts()" class="btn btn-primary btn-sm mt-2">
+            Save & Update Section Contexts
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: LIVE COURT DOCUMENT PREVIEW SHEET -->
+      <div class="right-panel">
+        <div class="preview-toolbar glass-card">
+          <div class="preview-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>A4 Court Document Live Manuscript</span>
+          </div>
+
+          <div class="toolbar-actions">
+            <button (click)="prevSection()" [disabled]="activeIndex <= 0" class="btn btn-secondary btn-sm">← Prev Section</button>
+            <button (click)="nextSection()" [disabled]="activeIndex >= sections.length - 1" class="btn btn-secondary btn-sm">Next Section →</button>
+            <button (click)="buildDocument()" [disabled]="isBuildingDoc" class="btn btn-primary btn-sm">
+              <svg *ngIf="!isBuildingDoc" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <svg *ngIf="isBuildingDoc" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              Build & Export Full DOCX
+            </button>
+          </div>
+        </div>
+
+        <!-- A4 LEGAL PAPER SHEET -->
+        <div class="legal-paper">
+          <div class="legal-header-block">
+            <h3>IN THE COURT OF THE {{ (currentSuit?.court || 'CIVIL JUDGE (SENIOR DIVISION)').toUpperCase() }}</h3>
+            <h4>AT {{ (currentSuit?.city || 'DISTRICT COURT').toUpperCase() }}</h4>
+            <p>SUIT NO. ________ OF {{ (currentSuit?.date ? (currentSuit?.date | date:'yyyy') : '2026') }}</p>
+          </div>
+
+          <!-- All Sections rendered sequentially -->
+          <div *ngFor="let sec of sections" (click)="selectSection(sec.sectionKey)" class="legal-section-block" [class.active-section]="sec.sectionKey === activeSectionKey">
+            <div class="legal-section-content">
+              <ng-container *ngIf="draftContexts[sec.sectionKey] && draftContexts[sec.sectionKey].length > 0">
+                <div
+                  *ngFor="let c of draftContexts[sec.sectionKey]; let contextIndex = index"
+                  class="section-paragraph"
+                  [ngClass]="'render-' + (c.definitionKey || 'default').toLowerCase()"
+                >
+                  <span *ngIf="c.definitionKey === 'FACTS'" class="fact-number">{{ contextIndex + 1 }}.</span>
+                  {{ c.context || c.value }}
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Court Signature Block -->
+          <div class="legal-signature-block">
+            <div>
+              <div class="sig-title">ADVOCATE FOR PLAINTIFF(S)</div>
+              <div class="sig-name">{{ currentSuit?.lawyer || 'High Court Advocate' }}</div>
+              <div class="sig-role">Counsel</div>
+            </div>
+            <div class="text-right">
+              <div class="sig-title">PLAINTIFF(S)</div>
+              <div class="sig-name">{{ (currentSuit?.plaintiffs && currentSuit!.plaintiffs.length > 0) ? currentSuit!.plaintiffs[0].name : 'Deponent' }}</div>
+              <div class="sig-role">Verification Deponent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- General Legal Query Floating Assistant -->
+  <div class="glass-card general-ai-card">
+    <div class="general-ai-header">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>Senior Counsel AI Legal Reference & Precedents Portal</span>
+    </div>
+    <div class="general-ai-input-row">
+      <input type="text" [(ngModel)]="generalChatPrompt" (keyup.enter)="sendGeneralChat()" placeholder="Ask any legal reference, limitation period, court fee rule, or CPC procedure question..." class="form-control" />
+      <button (click)="sendGeneralChat()" class="btn btn-secondary btn-sm">Ask Counsel</button>
+    </div>
+    <div *ngIf="generalChatResponse" class="general-ai-response animate-fade-in">
+      <p><strong>Senior Counsel Advice:</strong> {{ generalChatResponse }}</p>
+    </div>
+  </div>
+
+</div>
