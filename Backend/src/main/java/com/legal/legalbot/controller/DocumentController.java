@@ -71,7 +71,10 @@ public class DocumentController {
         if (template != null) {
             for (SectionDefinitionDto section : template.getSections()) {
                 if ("STATIC".equalsIgnoreCase(section.getSourceType())) {
-                    sectionContexts.put(section.getSectionKey(), workflowService.getStaticSectionContexts(section.getSectionKey(), request.getSuitDto()));
+                    sectionContexts.put(section.getSectionKey(), workflowService.getStaticSectionContexts(
+                            section.getSectionKey(), request.getSuitDto(), request.getDocumentType()));
+                } else if ("AI".equalsIgnoreCase(section.getSourceType())) {
+                    sectionContexts.put(section.getSectionKey(), workflowService.getSampleAiSectionContexts(section.getSectionKey(), request.getSuitDto()));
                 }
             }
         }
@@ -101,7 +104,8 @@ public class DocumentController {
             response.setRenderContexts(result.getRenderContexts());
         } else {
             logger.info("Section {} is static", request.getSectionKey());
-            response.setRenderContexts(workflowService.getStaticSectionContexts(request.getSectionKey(), request.getSuitDto()));
+                response.setRenderContexts(workflowService.getStaticSectionContexts(
+                    request.getSectionKey(), request.getSuitDto(), request.getDocumentType()));
         }
         return response;
     }

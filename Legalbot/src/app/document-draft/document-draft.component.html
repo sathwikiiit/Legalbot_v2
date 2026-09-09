@@ -19,19 +19,7 @@
         </select>
       </div>
 
-      <!-- Document Template Select -->
-      <div class="control-item">
-        <label class="control-label">Document Template:</label>
-        <select [(ngModel)]="selectedTemplateKey" (change)="onTemplateSelect()" class="form-control control-select">
-          <option value="PLAINT_RECOVERY">Plaint - Suit for Recovery of Money (Order XXXVII)</option>
-          <option value="PLAINT_INJUNCTION">Plaint - Suit for Permanent Injunction</option>
-          <option value="PLAINT_SPECIFIC_PERFORMANCE">Plaint - Specific Performance of Agreement</option>
-          <option value="EVICTION_PETITION">Eviction Petition & Rent Arrears</option>
-          <option *ngFor="let t of templates" [value]="t.templateKey">{{t.displayName}}</option>
-        </select>
-      </div>
-
-      <button (click)="initializeDraft()" [disabled]="isInitializing || !selectedTemplateKey" class="btn btn-primary">
+      <button (click)="initializeDraft()" [disabled]="isInitializing || !currentSuit?.suitType" class="btn btn-primary">
         <svg *ngIf="!isInitializing" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
         </svg>
@@ -171,7 +159,7 @@
                   [ngClass]="'render-' + (c.definitionKey || 'default').toLowerCase()"
                 >
                   <span *ngIf="c.definitionKey === 'FACTS'" class="fact-number">{{ contextIndex + 1 }}.</span>
-                  {{ c.context || c.value }}
+                  {{ c.value || c.context }}
                 </div>
               </ng-container>
             </div>

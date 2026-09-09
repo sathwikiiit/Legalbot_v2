@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SuitDto, PartyDto, PropertyDto } from '../types';
+import { SuitDto, PartyDto, PropertyDto, DocumentTemplateDto } from '../types';
 import { X, Plus, Trash2, Building2, User, Home, Gavel } from 'lucide-react';
 
 interface SuitFormModalProps {
@@ -7,13 +7,15 @@ interface SuitFormModalProps {
   onClose: () => void;
   onSave: (suit: SuitDto) => void;
   initialSuit?: SuitDto | null;
+  templates: DocumentTemplateDto[];
 }
 
 export const SuitFormModal: React.FC<SuitFormModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  initialSuit
+  initialSuit,
+  templates
 }) => {
   const [court, setCourt] = useState('IN THE COURT OF THE CIVIL JUDGE (SENIOR DIVISION)');
   const [city, setCity] = useState('Bengaluru, Karnataka');
@@ -234,10 +236,11 @@ export const SuitFormModal: React.FC<SuitFormModalProps> = ({
                   onChange={e => setSuitType(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white font-medium text-slate-800"
                 >
-                  <option value="PLAINT_RECOVERY">Money Suit / Recovery of Debt (Order XXXVII)</option>
-                  <option value="PLAINT_INJUNCTION">Declaration of Title & Permanent Injunction</option>
-                  <option value="PLAINT_SPECIFIC_PERFORMANCE">Specific Performance of Agreement to Sell</option>
-                  <option value="EVICTION_PETITION">Eviction of Tenant & Rent Arrears</option>
+                  {templates.map(template => (
+                    <option key={template.templateKey} value={template.templateKey}>
+                      {template.displayName}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

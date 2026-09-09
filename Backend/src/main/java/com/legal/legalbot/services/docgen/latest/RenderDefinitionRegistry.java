@@ -66,6 +66,23 @@ public class RenderDefinitionRegistry {
             run.setText(partyName);
         });
 
+        definitions.put("INTRO", (context, document) -> {
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.setAlignment(ParagraphAlignment.LEFT);
+            paragraph.setIndentFromLeft(config.getFirstLineIndentTwips());
+            XWPFRun run = paragraph.createRun();
+            run.setText(context.getContext());
+        });
+
+        definitions.put("CAUSE_TITLE_DETAIL", (context, document) -> {
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+            XWPFRun run = paragraph.createRun();
+            run.setBold(true);
+            run.setUnderline(org.apache.poi.xwpf.usermodel.UnderlinePatterns.SINGLE);
+            run.setText(context.getContext());
+        });
+
         definitions.put("PARTY_TAG", (context, document) -> {
             String partyTag = context.getContext();
             XWPFParagraph paragraph = document.createParagraph();

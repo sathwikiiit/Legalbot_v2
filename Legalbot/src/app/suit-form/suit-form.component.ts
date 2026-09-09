@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FetcherService } from '../services/fetcher.service';
-import { PropertyFormControls, Suit, SuitFormControls, SuitDto } from '../suit';
+import { DocumentTemplateDto, PropertyFormControls, Suit, SuitFormControls, SuitDto } from '../suit';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -16,6 +16,7 @@ export class SuitFormComponent implements OnInit {
   @Input() id!: number | undefined;
   activeTab: 'basic' | 'plaintiffs' | 'defendants' | 'property' = 'basic';
   suitDto: SuitDto = new SuitDto();
+  templates: DocumentTemplateDto[] = [];
   formdata: SuitFormControls;
   submitted: boolean = false;
 
@@ -32,7 +33,8 @@ export class SuitFormComponent implements OnInit {
   constructor(
     private fetcher: FetcherService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.formdata = Suit.createForm(
       [this.createPartyGroup('PLAINTIFF')],
@@ -47,8 +49,15 @@ export class SuitFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.id) {
-      this.fetcher.fetchsuitbyid(this.id).subscribe((suit: SuitDto) => {
+    this.fetcher.getTemplates().subscribe({
+      next: (templates) => this.templates = templates || [],
+      error: (error) => console.error('Failed to load suit types', error)
+    });
+
+    const routeId = this.route.snapshot.paramMap.get('id');
+    const targetId = this.id || (routeId ? Number(routeId) : null);
+    if (targetId) {
+      this.fetcher.fetchsuitbyid(targetId).subscribe((suit: SuitDto) => {
         if (suit) {
           this.suitDto = suit;
           this.populateForm(suit);

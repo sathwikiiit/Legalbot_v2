@@ -86,6 +86,16 @@ const mockSuits: SuitDto[] = [
     date: '2026-08-08T10:00:00Z',
     suitType: 'PLAINT_RECOVERY',
     relief: 'Recovery of principal amount Rs. 24,50,000/- along with interest @ 18% p.a. from date of default till realization, costs of suit and permanent injunction.',
+    facts: [
+      'That the Plaintiff supplied software implementation and support services to the Defendant under a written service agreement dated 12th April 2025.',
+      'That the Defendant accepted the services and outstanding invoices totaling Rs. 24,50,000/- but failed to make payment despite repeated demands.',
+      'That a legal demand notice dated 15th January 2026 was served upon the Defendant, who neither cleared the dues nor raised any valid dispute.'
+    ],
+    reliefs: [
+      'Recovery of Rs. 24,50,000/- towards the outstanding principal amount.',
+      'Interest at 18% per annum from the date of default until full realization.',
+      'Costs of the suit and such other reliefs as this Hon\'ble Court deems fit.'
+    ],
     affiantIndex: '1'
   },
   {
@@ -102,6 +112,16 @@ const mockSuits: SuitDto[] = [
         age: 68,
         occupation: 'Retired Senior Citizen',
         address: 'House No. C-14, Vasant Vihar, New Delhi - 110057',
+        partyType: 'PLAINTIFF'
+      },
+      {
+        id: 5,
+        name: 'Shri Arjun Anand',
+        relation: 'S/o Late Capt. Anand Swaroop',
+        gender: 'Male',
+        age: 39,
+        occupation: 'Agricultural Consultant',
+        address: 'Flat 4B, Green Park Extension, New Delhi - 110016',
         partyType: 'PLAINTIFF'
       }
     ],
@@ -131,6 +151,16 @@ const mockSuits: SuitDto[] = [
     date: '2026-08-05T14:30:00Z',
     suitType: 'PLAINT_INJUNCTION',
     relief: 'Declaration of absolute title and decree of Permanent Prohibitory Injunction restraining defendant from encroaching or creating third party charge.',
+    facts: [
+      'That the Plaintiffs are the lawful owners and are in settled possession of the residential property bearing Khasra No. 341/2 at Vasant Vihar, New Delhi.',
+      'That the Defendant has no right, title or interest in the property but recently attempted to enter the premises and commence unauthorized construction.',
+      'That the Defendant threatened to create third-party rights over the property, compelling the Plaintiffs to approach this Hon\'ble Court for protection of their title and possession.'
+    ],
+    reliefs: [
+      'Declaration that the Plaintiffs have absolute title over the Schedule Property.',
+      'Permanent injunction restraining the Defendant from interfering with possession or creating any third-party interest.',
+      'Costs of the suit and any other relief deemed appropriate in the interests of justice.'
+    ],
     affiantIndex: '1'
   }
 ];
@@ -207,18 +237,43 @@ function formatPartyBlock(parties: SuitDto['plaintiffs'], headerTitle: string) {
 
 // Generate Rule-Based Sections
 function generateRuleBasedSection(sectionKey: string, suit: SuitDto): RenderContextDto[] {
-  const p1 = suit.plaintiffs[0]?.name || 'PLAINTIFF';
+  const p1 = suit.plaintiffs[0]?.name || 'Plaintiff';
   const d1 = suit.defendants[0]?.name || 'DEFENDANT';
   const prop = suit.property[0] || { type: 'Property', mkvalue: '50,00,000', syn: 'N/A', hn: 'N/A', extent: 'N/A', plotNo: 'N/A' };
 
   switch (sectionKey) {
+    case 'facts_transaction':
+    case 'facts_interference':
+    case 'agreement_facts':
+    case 'tenancy_terms':
+      return (suit.facts || ['That the parties entered into the transaction described in the plaint.', 'That the Defendant failed to perform the corresponding obligations despite notice.'])
+        .map((fact, index) => ({
+          sectionKey,
+          definitionKey: `fact_${index + 1}`,
+          context: `Fact ${index + 1}`,
+          value: `${index + 1}. ${fact}`,
+          order: index + 1,
+          sourceType: 'RULE_BASED',
+          editable: true
+        }));
+
     case 'jurisdiction_title':
+      const causeYear = suit.date ? new Date(suit.date).getFullYear() : new Date().getFullYear();
+      const plaintiffNames = suit.plaintiffs.length > 0
+        ? suit.plaintiffs.map((plaintiff, index) => `${suit.plaintiffs.length > 1 ? `${index + 1}. ` : ''}${plaintiff.name.toUpperCase()}`).join('\n')
+        : 'PLAINTIFF';
+      const filedUnder = {
+        PLAINT_RECOVERY: 'ORDER XXXVII OF THE CODE OF CIVIL PROCEDURE, 1908',
+        PLAINT_INJUNCTION: 'ORDER XXXIX RULES 1 AND 2 OF THE CODE OF CIVIL PROCEDURE, 1908',
+        PLAINT_SPECIFIC_PERFORMANCE: 'THE SPECIFIC RELIEF ACT, 1963',
+        EVICTION_PETITION: 'SECTION 106 OF THE TRANSFER OF PROPERTY ACT, 1882'
+      }[suit.suitType as 'PLAINT_RECOVERY' | 'PLAINT_INJUNCTION' | 'PLAINT_SPECIFIC_PERFORMANCE' | 'EVICTION_PETITION'] || 'THE RELEVANT PROVISIONS OF LAW';
       return [
         {
           sectionKey,
           definitionKey: 'court_header',
           context: 'Court Title & Forum',
-          value: `IN THE COURT OF ${suit.court.toUpperCase()}\nAT ${suit.city.toUpperCase()}\n\nCIVIL SUIT NO. _____ OF 2026`,
+          value: `IN THE COURT OF ${suit.court.toUpperCase()}\nAT ${suit.city.toUpperCase()}\n\nOS No. ____ OF ${causeYear}`,
           order: 1,
           sourceType: 'RULE_BASED',
           editable: true
@@ -227,8 +282,17 @@ function generateRuleBasedSection(sectionKey: string, suit: SuitDto): RenderCont
           sectionKey,
           definitionKey: 'cause_title_short',
           context: 'Cause Title Heading',
-          value: `${p1.toUpperCase()}\n... PLAINTIFF(S)\n\nVERSUS\n\n${d1.toUpperCase()}\n... DEFENDANT(S)`,
+          value: `${plaintiffNames}\n... ${suit.plaintiffs.length > 1 ? 'PLAINTIFFS' : 'PLAINTIFF'}\n\nVERSUS\n\n${d1.toUpperCase()}\n... DEFENDANT(S)`,
           order: 2,
+          sourceType: 'RULE_BASED',
+          editable: true
+        },
+        {
+          sectionKey,
+          definitionKey: 'cause_title_details',
+          context: 'Cause Title Details',
+          value: `PLAINT FILED UNDER: ${filedUnder}\nCLAIM: ${suit.relief || (suit.suitType === 'PLAINT_PARTITION' ? 'Partition and separate possession of the Schedule Property, with consequential reliefs and costs.' : 'As set out in the plaint')}`,
+          order: 3,
           sourceType: 'RULE_BASED',
           editable: true
         }
@@ -283,12 +347,13 @@ function generateRuleBasedSection(sectionKey: string, suit: SuitDto): RenderCont
       ];
 
     case 'prayer_relief':
+      const reliefs = suit.reliefs?.length ? suit.reliefs : [suit.relief];
       return [
         {
           sectionKey,
           definitionKey: 'prayer_text',
           context: 'Prayer & Relief Clause',
-          value: `WHEREFORE, THE PLAINTIFF MOST RESPECTFULLY PRAYS THAT THIS HON'BLE COURT MAY BE PLEASED TO PASS A DECREE IN FAVOR OF THE PLAINTIFF AND AGAINST THE DEFENDANT(S):\n\n(a) ${suit.relief}\n(b) Direct the Defendant to pay interest at 18% per annum from the date of suit till full realization;\n(c) Award costs of the suit in favor of the Plaintiff;\n(d) Pass such other order or orders as this Hon'ble Court deems fit in the interest of justice and equity.`,
+          value: `WHEREFORE, THE PLAINTIFFS MOST RESPECTFULLY PRAY THAT THIS HON'BLE COURT MAY BE PLEASED TO PASS A DECREE IN FAVOR OF THE PLAINTIFFS AND AGAINST THE DEFENDANT(S):\n\n${reliefs.map((relief, index) => `(${String.fromCharCode(97 + index)}) ${relief}`).join('\n')}\n(${String.fromCharCode(97 + reliefs.length)}) Pass such other order or orders as this Hon'BLE Court deems fit in the interest of justice and equity.`,
           order: 1,
           sourceType: 'RULE_BASED',
           editable: true

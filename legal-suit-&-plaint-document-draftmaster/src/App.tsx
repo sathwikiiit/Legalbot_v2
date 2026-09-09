@@ -46,8 +46,9 @@ export default function App() {
       if (suitsData && suitsData.length > 0) {
         const firstSuit = suitsData[0];
         setActiveSuit(firstSuit);
+        setSelectedTemplateKey(firstSuit.suitType || 'PLAINT_RECOVERY');
         // Auto initialize draft for first suit
-        handleInitializeDraft(firstSuit, 'PLAINT_RECOVERY');
+        handleInitializeDraft(firstSuit, firstSuit.suitType || 'PLAINT_RECOVERY');
       }
     } catch (err) {
       console.error('Error fetching initial app data:', err);
@@ -166,6 +167,7 @@ export default function App() {
         activeSuit={activeSuit}
         onSelectSuit={suit => {
           setActiveSuit(suit);
+          setSelectedTemplateKey(suit.suitType || 'PLAINT_RECOVERY');
           handleInitializeDraft(suit);
         }}
         onNewSuit={() => {
@@ -255,6 +257,7 @@ export default function App() {
         }}
         onSave={handleSaveSuit}
         initialSuit={editingSuit}
+        templates={templates}
       />
     </div>
   );

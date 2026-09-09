@@ -44,9 +44,53 @@ public class DocumentWorkflowService {
         return draftService.createDraft(documentType, suitDto);
     }
 
+        public List<RenderContextDto> getSampleAiSectionContexts(String sectionKey, SuitDto suitDto) {
+        String plaintiff = suitDto != null && suitDto.getPlaintiffs() != null && !suitDto.getPlaintiffs().isEmpty()
+            ? suitDto.getPlaintiffs().get(0).getName()
+            : "the Plaintiff";
+        String defendant = suitDto != null && suitDto.getDefendants() != null && !suitDto.getDefendants().isEmpty()
+            ? suitDto.getDefendants().get(0).getName()
+            : "the Defendant";
+
+        if ("FACTS".equalsIgnoreCase(sectionKey)) {
+            return List.of(
+                new RenderContextDto(sectionKey, "FACTS", "Fact 1", "That " + plaintiff + " entered into the underlying transaction with " + defendant + " under agreed terms and conditions.", 0, "SAMPLE", true),
+                new RenderContextDto(sectionKey, "FACTS", "Fact 2", "That " + plaintiff + " performed the agreed obligations, but " + defendant + " failed to make the due payment or otherwise perform the corresponding obligation.", 1, "SAMPLE", true),
+                new RenderContextDto(sectionKey, "FACTS", "Fact 3", "That repeated requests and the legal demand made by " + plaintiff + " did not result in compliance, giving rise to the present suit.", 2, "SAMPLE", true)
+            );
+        }
+
+        if ("RELIEF".equalsIgnoreCase(sectionKey)) {
+            String relief = suitDto == null ? null : suitDto.getRelief();
+                String primaryRelief = relief == null || relief.isBlank()
+                    ? ("PLAINT_PARTITION".equalsIgnoreCase(suitDto == null ? null : suitDto.getSuitType())
+                    ? "Partition and separate possession of the Schedule Property, with consequential reliefs and costs."
+                    : "Grant the relief claimed in the plaint in favor of the Plaintiff.")
+                : relief;
+            return List.of(
+                new RenderContextDto(sectionKey, "RELIEF", "Relief 1", primaryRelief, 0, "SAMPLE", true),
+                new RenderContextDto(sectionKey, "RELIEF", "Relief 2", "Award costs of the suit and such other relief as this Hon'ble Court deems fit in the interests of justice.", 1, "SAMPLE", true)
+            );
+        }
+
+        return List.of();
+        }
+
     public List<RenderContextDto> getStaticSectionContexts(String sectionKey, SuitDto suitDto) {
         logger.info("Loading static section contexts for sectionKey={}", sectionKey);
         Suit suit = SuitDto.toEntity(suitDto);
+        DraftContext context = new DraftContext(suit);
+        ProviderRegistry providerRegistry = new ProviderRegistry();
+        List<RenderContext> renderContexts = providerRegistry.executeProvider(sectionKey, context);
+        return convertRenderContexts(sectionKey, renderContexts, "STATIC", true);
+    }
+
+    public List<RenderContextDto> getStaticSectionContexts(String sectionKey, SuitDto suitDto, String documentType) {
+        logger.info("Loading static section contexts for sectionKey={} documentType={}", sectionKey, documentType);
+        Suit suit = SuitDto.toEntity(suitDto);
+        if (suit != null && documentType != null && !documentType.isBlank()) {
+            suit.setSuitType(documentType);
+        }
         DraftContext context = new DraftContext(suit);
         ProviderRegistry providerRegistry = new ProviderRegistry();
         List<RenderContext> renderContexts = providerRegistry.executeProvider(sectionKey, context);
@@ -65,7 +109,11 @@ public class DocumentWorkflowService {
             return new TaskResultDto(TaskResultDto.Status.COMPLETE, null, contexts);
         }
         logger.info("Gemma AI section requires more info: question={}", result.question());
-        return new TaskResultDto(TaskResultDto.Status.NEEDS_INFO, result.question(), null);
+        return new TaskResultDto(
+            TaskResultDto.Status.NEEDS_INFO,
+            result.question(),
+            getSampleAiSectionContexts(request.getSectionKey(), request.getSuitDto())
+        );
     }
 
     public TaskResultDto runAiSectionKeyValue(AiStepRequest request) {

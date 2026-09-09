@@ -72,6 +72,7 @@ export class DocumentDraftComponent implements OnInit {
         this.selectedSuitId = Number(params['suitId']);
         this.fetcher.fetchsuitbyid(this.selectedSuitId).subscribe(s => {
           this.currentSuit = s;
+          this.selectedTemplateKey = s.suitType || 'PLAINT_RECOVERY';
           // Auto initialize draft once suit is loaded
           this.initializeDraft();
         });
@@ -101,6 +102,7 @@ export class DocumentDraftComponent implements OnInit {
         this.suits = res || [];
         if (this.selectedSuitId && !this.currentSuit) {
           this.currentSuit = this.suits.find(s => s.id === this.selectedSuitId) || null;
+          this.selectedTemplateKey = this.currentSuit?.suitType || 'PLAINT_RECOVERY';
         }
       }
     });
@@ -109,14 +111,11 @@ export class DocumentDraftComponent implements OnInit {
   onSuitSelect() {
     if (this.selectedSuitId) {
       this.currentSuit = this.suits.find(s => s.id === Number(this.selectedSuitId)) || null;
+      this.selectedTemplateKey = this.currentSuit?.suitType || 'PLAINT_RECOVERY';
     } else {
       this.currentSuit = null;
     }
     // Re-initialize draft with new suit context
-    this.initializeDraft();
-  }
-
-  onTemplateSelect() {
     this.initializeDraft();
   }
 

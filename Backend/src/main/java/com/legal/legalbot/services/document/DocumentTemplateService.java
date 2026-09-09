@@ -1,7 +1,9 @@
 package com.legal.legalbot.services.document;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 
@@ -10,14 +12,20 @@ import com.legal.legalbot.dto.document.SectionDefinitionDto;
 
 @Service
 public class DocumentTemplateService {
+    private final Map<String, Supplier<DocumentTemplateDto>> templateRegistry = new LinkedHashMap<>();
+
+    public DocumentTemplateService() {
+        templateRegistry.put("PLAINT_RECOVERY", this::getPlaintRecoveryTemplate);
+        templateRegistry.put("PLAINT_INJUNCTION", this::getPlaintInjunctionTemplate);
+        templateRegistry.put("PLAINT_SPECIFIC_PERFORMANCE", this::getPlaintSpecificPerformanceTemplate);
+        templateRegistry.put("EVICTION_PETITION", this::getEvictionPetitionTemplate);
+        templateRegistry.put("PLAINT_PARTITION", this::getPartitionPlaintTemplate);
+    }
 
     public List<DocumentTemplateDto> getTemplates() {
-        return List.of(
-            getPlaintRecoveryTemplate(),
-            getPlaintInjunctionTemplate(),
-            getPlaintSpecificPerformanceTemplate(),
-            getEvictionPetitionTemplate()
-        );
+        return templateRegistry.values().stream()
+                .map(Supplier::get)
+                .toList();
     }
 
     public DocumentTemplateDto getTemplate(String templateKey) {
@@ -25,19 +33,12 @@ public class DocumentTemplateService {
             return getPlaintRecoveryTemplate();
         }
 
-        switch (templateKey.toUpperCase()) {
-            case "PLAINT_RECOVERY":
-            case "DEFAULT_CIVIL_SUIT":
-                return getPlaintRecoveryTemplate();
-            case "PLAINT_INJUNCTION":
-                return getPlaintInjunctionTemplate();
-            case "PLAINT_SPECIFIC_PERFORMANCE":
-                return getPlaintSpecificPerformanceTemplate();
-            case "EVICTION_PETITION":
-                return getEvictionPetitionTemplate();
-            default:
-                return getPlaintRecoveryTemplate(); // Fallback to default Recovery Plaint
+        String normalizedKey = templateKey.toUpperCase();
+        if ("DEFAULT_CIVIL_SUIT".equals(normalizedKey)) {
+            normalizedKey = "PLAINT_RECOVERY";
         }
+
+        return templateRegistry.getOrDefault(normalizedKey, this::getPlaintRecoveryTemplate).get();
     }
 
     private DocumentTemplateDto getPlaintRecoveryTemplate() {
@@ -56,13 +57,32 @@ public class DocumentTemplateService {
         );
     }
 
+    private DocumentTemplateDto getPartitionPlaintTemplate() {
+        return new DocumentTemplateDto(
+            "PLAINT_PARTITION",
+            "Plaint - Suit for Partition and Separate Possession",
+            List.of(
+                new SectionDefinitionDto("CAUSE_TITLE", "Court Jurisdiction & Forum Title", "STATIC", true, null, 100),
+                new SectionDefinitionDto("INTRO", "May it please you honour,", "STATIC", true, null, 200),
+                new SectionDefinitionDto("FACTS", "Title Facts & Interference Narrative", "AI", true, "FACTS", 300),
+                new SectionDefinitionDto("PROPERTY_SCHEDULE", "Schedule Property Particulars", "STATIC", true, null, 400),
+                new SectionDefinitionDto("CAUSE_OF_ACTION", "Cause of Action & Apprehension", "STATIC", true, null, 500),
+                new SectionDefinitionDto("JURISDICTION", "Jurisdiction & Forum Competence", "STATIC", true, null, 600),
+                new SectionDefinitionDto("VALUATION_COURT_FEE", "Suit Valuation & Fixed Court Fee", "STATIC", true, null, 700),
+                new SectionDefinitionDto("RELIEF", "Partition & Separate Possession Prayer", "AI", true, "RELIEF", 800),
+                new SectionDefinitionDto("VERIFICATION", "Verification Affidavit", "STATIC", true, null, 900)
+            )
+        );
+    }
+    
+
     private DocumentTemplateDto getPlaintInjunctionTemplate() {
         return new DocumentTemplateDto(
             "PLAINT_INJUNCTION",
             "Plaint - Declaration of Title & Permanent Injunction",
             List.of(
                 new SectionDefinitionDto("CAUSE_TITLE", "Court Jurisdiction & Forum Title", "STATIC", true, null, 100),
-                new SectionDefinitionDto("PARTIES", "Parties Particulars", "STATIC", true, null, 200),
+                new SectionDefinitionDto("INTRO", "May it please you honour,", "STATIC", true, null, 200),
                 new SectionDefinitionDto("FACTS", "Title Facts & Interference Narrative", "AI", true, "FACTS", 300),
                 new SectionDefinitionDto("PROPERTY_SCHEDULE", "Schedule Property Particulars", "STATIC", true, null, 400),
                 new SectionDefinitionDto("CAUSE_OF_ACTION", "Cause of Action & Apprehension", "STATIC", true, null, 500),

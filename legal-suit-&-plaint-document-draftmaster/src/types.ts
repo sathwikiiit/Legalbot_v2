@@ -31,6 +31,8 @@ export interface SuitDto {
   date: string;
   suitType: string;
   relief: string;
+  facts?: string[];
+  reliefs?: string[];
   affiantIndex: string;
 }
 

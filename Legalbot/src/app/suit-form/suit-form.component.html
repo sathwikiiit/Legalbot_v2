@@ -93,10 +93,9 @@
           <select id="suitType" formControlName="suitType" class="form-control"
                   [class.is-invalid]="formdata.get('suitType')?.invalid && (formdata.get('suitType')?.touched || submitted)">
             <option value="">-- Select Suit Type --</option>
-            <option value="PLAINT_RECOVERY">Money Suit / Recovery of Debt (Order XXXVII)</option>
-            <option value="PLAINT_INJUNCTION">Declaration of Title & Permanent Injunction</option>
-            <option value="PLAINT_SPECIFIC_PERFORMANCE">Specific Performance of Agreement to Sell</option>
-            <option value="EVICTION_PETITION">Eviction of Tenant & Rent Arrears</option>
+            <option *ngFor="let template of templates" [value]="template.templateKey">
+              {{ template.displayName }}
+            </option>
           </select>
           <div *ngIf="formdata.get('suitType')?.invalid && (formdata.get('suitType')?.touched || submitted)" class="form-error">
             ⚠️ Please select a Suit Category.

@@ -298,7 +298,9 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 .section-paragraph { white-space: pre-wrap; line-height: 1.6; }
 .section-paragraph.render-court_name,
 .section-paragraph.render-document_title,
-.section-paragraph.render-section_divider { text-align: center; font-weight: 700; }
+.section-paragraph.render-section_divider,
+.section-paragraph.render-cause_title_detail { text-align: center; font-weight: 700; text-decoration: underline; }
+.section-paragraph.render-intro { text-align: left; text-indent: 2em; }
 .section-paragraph.render-party_name,
 .section-paragraph.render-party_full_details { text-align: left; }
 .section-paragraph.render-party_tag { text-align: right; font-weight: 700; }

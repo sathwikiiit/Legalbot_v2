@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.time.Year;
 
 import com.legal.legalbot.model.Party;
 import com.legal.legalbot.model.Suit;
@@ -12,6 +13,13 @@ import com.legal.legalbot.services.docgen.internal.DraftContext;
 import com.legal.legalbot.services.docgen.internal.RenderContext;
 
 public class ProviderRegistry {
+    private static final Map<String, String> FILING_LAWS = Map.of(
+            "PLAINT_RECOVERY", "ORDER XXXVII OF THE CODE OF CIVIL PROCEDURE, 1908",
+            "PLAINT_INJUNCTION", "ORDER XXXIX RULES 1 AND 2 OF THE CODE OF CIVIL PROCEDURE, 1908",
+            "PLAINT_SPECIFIC_PERFORMANCE", "THE SPECIFIC RELIEF ACT, 1963",
+            "EVICTION_PETITION", "SECTION 106 OF THE TRANSFER OF PROPERTY ACT, 1882",
+            "PLAINT_PARTITION", "ORDER XX RULE 18 OF THE CODE OF CIVIL PROCEDURE, 1908"
+    );
     private final Map<String, Function<DraftContext, List<RenderContext>>> providers = new HashMap<>();
 
     public ProviderRegistry() {
@@ -47,6 +55,8 @@ public class ProviderRegistry {
             list.add(new RenderContext("VERIFICATION", "VERIFICATION: Verified at " + cityStr + " that the contents of paragraphs of the plaint are true to the best of my knowledge and legal advice."));
         } else if ("PROPERTY_SCHEDULE".equalsIgnoreCase(sectionKey)) {
             list.add(new RenderContext("PROPERTY_SCHEDULE", "SCHEDULE PROPERTY: All that piece and parcel of the schedule property situated within the jurisdiction of this Hon'ble Court."));
+        } else if ("INTRO".equalsIgnoreCase(sectionKey)) {
+            list.add(new RenderContext("INTRO", "May it please Your Honour,"));
         } else {
             list.add(new RenderContext(sectionKey, "[" + sectionKey + " Section Clause]"));
         }
@@ -66,13 +76,20 @@ public class ProviderRegistry {
             String courtHeader = String.format("IN THE COURT OF THE %s AT %s", courtName, city);
 
             list.add(new RenderContext("COURT_NAME", courtHeader));
+            int causeYear = suit.getDate() != null
+                    ? suit.getDate().toInstant().atZone(java.time.ZoneId.systemDefault()).getYear()
+                    : Year.now().getValue();
+            list.add(new RenderContext("COURT_NAME", "OS No. ____ OF " + causeYear));
 
             // Plaintiffs
             if (suit.getPlaintiffs() != null && !suit.getPlaintiffs().isEmpty()) {
-                for (Party plaintiff : suit.getPlaintiffs()) {
-                    list.add(new RenderContext("PARTY_NAME", plaintiff.toString()));
+                boolean numberPlaintiffs = suit.getPlaintiffs().size() > 1;
+                for (int i = 0; i < suit.getPlaintiffs().size(); i++) {
+                    Party plaintiff = suit.getPlaintiffs().get(i);
+                    String prefix = numberPlaintiffs ? (i + 1) + ". " : "";
+                    list.add(new RenderContext("PARTY_NAME", prefix + plaintiff.toString()));
                 }
-                list.add(new RenderContext("PARTY_TAG", "... Plaintiffs"));
+                list.add(new RenderContext("PARTY_TAG", "... " + (suit.getPlaintiffs().size() > 1 ? "Plaintiffs" : "Plaintiff")));
             }
 
             // Divider
@@ -86,7 +103,28 @@ public class ProviderRegistry {
                 list.add(new RenderContext("PARTY_TAG", "... Defendants"));
             }
 
+            list.add(new RenderContext("CAUSE_TITLE_DETAIL", "PLAINT FILED UNDER: " + filedUnder(suit.getSuitType())));
+            list.add(new RenderContext("CAUSE_TITLE_DETAIL", "CLAIM: " + claimFor(suit)));
+
             return list;
         });
+    }
+
+    private String filedUnder(String suitType) {
+        if (suitType == null) {
+            return "THE RELEVANT PROVISIONS OF LAW";
+        }
+        String normalizedType = suitType.toUpperCase();
+        return FILING_LAWS.getOrDefault(normalizedType, normalizedType.replace('_', ' '));
+    }
+
+    private String claimFor(Suit suit) {
+        if ("PLAINT_PARTITION".equalsIgnoreCase(suit.getSuitType())) {
+            return "Partition and separate possession of the Schedule Property, with consequential reliefs and costs";
+        }
+        if (suit.getRelief() != null && !suit.getRelief().isBlank()) {
+            return suit.getRelief();
+        }
+        return "As set out in the plaint";
     }
 }

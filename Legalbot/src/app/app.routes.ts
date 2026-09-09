@@ -36,6 +36,12 @@ export const routes: Routes = [
         component:DocumentDraftComponent
     },
     {
+        path:'suit/:id/edit',
+        title:'Edit Suit Details',
+        canActivate:[AuthGuard],
+        component:SuitFormComponent,
+    },
+    {
         path:'suit/:id',
         title:'Enter the Details',
         canActivate:[AuthGuard],
