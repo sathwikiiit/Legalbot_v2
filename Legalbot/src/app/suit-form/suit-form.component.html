@@ -392,10 +392,10 @@
 
           <div class="form-grid-3">
             <div class="form-group">
-              <label class="form-label">Property Category / Type</label>
+              <label class="form-label">Property Category / Type *</label>
               <select formControlName="type" class="form-control">
                 <option value="">-- Select Category --</option>
-                <option *ngFor="let pt of propertyTypes" [value]="pt">{{ pt }}</option>
+                <option *ngFor="let pt of propertyTypes" [value]="pt.value">{{ pt.label }}</option>
               </select>
             </div>
 
@@ -404,25 +404,116 @@
               <input type="text" formControlName="mkvalue" class="form-control" placeholder="e.g. 50,00,000" />
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Extent / Area</label>
-              <input type="text" formControlName="extent" class="form-control" placeholder="e.g. 2400 sq. ft. / 2 Acres" />
-            </div>
-
-            <div class="form-group">
+            <div class="form-group" *ngIf="isLandOrPlot(ctrl)">
               <label class="form-label">Survey / Khata / Sy No.</label>
               <input type="text" formControlName="syn" class="form-control" placeholder="e.g. Sy. No. 112/A" />
             </div>
 
-            <div class="form-group">
-              <label class="form-label">House / Flat / Door No.</label>
-              <input type="text" formControlName="hn" class="form-control" placeholder="e.g. Flat No. 402 / Door 12" />
-            </div>
-
-            <div class="form-group">
+            <div class="form-group" *ngIf="isLandOrPlot(ctrl)">
               <label class="form-label">Plot / Site No.</label>
               <input type="text" formControlName="plotNo" class="form-control" placeholder="e.g. Plot No. 88" />
             </div>
+          </div>
+
+          <h4 class="property-subheading">Property Location</h4>
+          <div class="form-grid-3">
+            <div class="form-group" *ngIf="isHouse(ctrl) || isCommercial(ctrl)">
+              <label class="form-label">House / Door No.</label>
+              <input type="text" formControlName="hn" class="form-control" placeholder="Required for houses" />
+            </div>
+
+            <div class="form-group" *ngIf="isApartment(ctrl)">
+              <label class="form-label">Flat No.</label>
+              <input type="text" formControlName="flatNo" class="form-control" placeholder="Required for apartments" />
+            </div>
+
+            <div class="form-group" *ngIf="isApartment(ctrl) || isCommercial(ctrl)">
+              <label class="form-label">Building / Apartment Name</label>
+              <input type="text" formControlName="buildingName" class="form-control" />
+            </div>
+
+            <div class="form-group" *ngIf="!isLandOrPlot(ctrl) || ctrl.get('street')?.value">
+              <label class="form-label">Street<span *ngIf="isBuilding(ctrl)"> *</span></label>
+              <input type="text" formControlName="street" class="form-control" />
+            </div>
+
+            <div class="form-group" *ngIf="!isLandOrPlot(ctrl) || ctrl.get('locality')?.value">
+              <label class="form-label">Locality / Layout</label>
+              <input type="text" formControlName="locality" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Village / Town *</label>
+              <input type="text" formControlName="villageOrTown" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mandal *</label>
+              <input type="text" formControlName="mandal" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">District *</label>
+              <input type="text" formControlName="district" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <input type="text" formControlName="state" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">PIN Code</label>
+              <input type="text" formControlName="pincode" class="form-control" maxlength="6" />
+            </div>
+          </div>
+
+          <h4 class="property-subheading" *ngIf="isLandOrPlot(ctrl)">Area and Boundaries</h4>
+          <div class="form-grid-3" *ngIf="isLandOrPlot(ctrl)">
+            <div class="form-group">
+              <label class="form-label">Area</label>
+              <input type="number" min="0" step="0.01" formControlName="areaValue" class="form-control" placeholder="e.g. 2400 or 2" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Area Unit</label>
+              <select formControlName="areaUnit" class="form-control">
+                <option value="">-- Select Unit --</option>
+                <option value="SQFT">Square Feet</option>
+                <option value="SQYD">Square Yards</option>
+                <option value="GUNTA">Guntas</option>
+                <option value="ACRE">Acres</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="ctrl.get('areaUnit')?.value === 'ACRE'">
+              <label class="form-label">Additional Guntas</label>
+              <input type="number" min="0" max="39.99" step="0.01" formControlName="guntas" class="form-control" placeholder="0 to 39.99" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">North Boundary<span *ngIf="isLandOrPlot(ctrl)"> *</span></label>
+              <input type="text" formControlName="northBoundary" class="form-control" placeholder="e.g. Property of ..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">South Boundary<span *ngIf="isLandOrPlot(ctrl)"> *</span></label>
+              <input type="text" formControlName="southBoundary" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">East Boundary<span *ngIf="isLandOrPlot(ctrl)"> *</span></label>
+              <input type="text" formControlName="eastBoundary" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">West Boundary<span *ngIf="isLandOrPlot(ctrl)"> *</span></label>
+              <input type="text" formControlName="westBoundary" class="form-control" />
+            </div>
+          </div>
+
+          <div class="property-validation" *ngIf="submitted && ctrl.invalid">
+            Complete the required fields for this property type. Land and plot records require area, all four boundaries, Village/Town, Mandal, and District.
           </div>
         </div>
       </ng-container>

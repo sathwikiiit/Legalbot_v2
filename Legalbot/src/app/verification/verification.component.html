@@ -129,7 +129,21 @@
           <span class="form-label">Schedule Property Items:</span>
           <div *ngFor="let pr of suit?.property; let i = index" class="prop-item">
             <div class="prop-title">{{ pr.type || 'Property Item' }} (Val: ₹{{ pr.mkvalue || 'N/A' }})</div>
-            <div class="prop-sub">Extent: {{ pr.extent || 'N/A' }} | Sy No: {{ pr.syn || 'N/A' }} | Door: {{ pr.hn || 'N/A' }}</div>
+            <div class="prop-sub">
+              Area: {{ pr.areaValue || pr.extent || 'N/A' }} {{ pr.areaUnit || '' }}
+              | Survey: {{ pr.syn || 'N/A' }} | Plot: {{ pr.plotNo || 'N/A' }}
+            </div>
+            <div class="prop-sub">
+              {{ pr.flatNo ? 'Flat ' + pr.flatNo + ' | ' : '' }}{{ pr.hn ? 'Door ' + pr.hn + ' | ' : '' }}
+              {{ pr.street || '' }}{{ pr.locality ? ', ' + pr.locality : '' }}
+            </div>
+            <div class="prop-sub">
+              {{ pr.villageOrTown || 'Village/Town N/A' }}, {{ pr.mandal || 'Mandal N/A' }}, {{ pr.district || 'District N/A' }}
+            </div>
+            <div class="prop-sub" *ngIf="pr.northBoundary || pr.southBoundary || pr.eastBoundary || pr.westBoundary">
+              N: {{ pr.northBoundary || 'N/A' }} | S: {{ pr.southBoundary || 'N/A' }} |
+              E: {{ pr.eastBoundary || 'N/A' }} | W: {{ pr.westBoundary || 'N/A' }}
+            </div>
           </div>
         </div>
       </div>

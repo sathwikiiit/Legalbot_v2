@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FetcherService } from '../services/fetcher.service';
 import { DocumentTemplateDto, PropertyFormControls, Suit, SuitFormControls, SuitDto } from '../suit';
@@ -21,13 +21,12 @@ export class SuitFormComponent implements OnInit {
   submitted: boolean = false;
 
   propertyTypes = [
-    'House / Villa / Residential Building',
-    'Flat / Apartment / Condo',
-    'Open Land / Plot / Site',
-    'Agricultural Land',
-    'Commercial Premises / Office / Shop',
-    'Industrial Shed / Factory Premises',
-    'Other Immovable Property'
+    { value: 'HOUSE', label: 'House / Villa / Residential Building' },
+    { value: 'APARTMENT', label: 'Flat / Apartment / Condo' },
+    { value: 'PLOT', label: 'Open Land / Plot / Site' },
+    { value: 'LAND', label: 'Agricultural Land' },
+    { value: 'COMMERCIAL', label: 'Commercial Premises / Office / Shop' },
+    { value: 'OTHER', label: 'Other Immovable Property' }
   ];
 
   constructor(
@@ -80,8 +79,89 @@ export class SuitFormComponent implements OnInit {
       extent: [''],
       syn: [''],
       hn: [''],
-      plotNo: ['']
-    });
+      plotNo: [''],
+      areaValue: [null as number | null],
+      areaUnit: [''],
+      guntas: [null as number | null],
+      flatNo: [''],
+      buildingName: [''],
+      street: [''],
+      locality: [''],
+      villageOrTown: [''],
+      mandal: [''],
+      district: [''],
+      state: [''],
+      pincode: [''],
+      northBoundary: [''],
+      southBoundary: [''],
+      eastBoundary: [''],
+      westBoundary: ['']
+    }, { validators: this.propertyValidator }) as FormGroup<PropertyFormControls>;
+  }
+
+  private propertyValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value as any;
+    const missing: string[] = [];
+    const required = (field: string, label: string) => {
+      if (!String(value?.[field] ?? '').trim()) missing.push(label);
+    };
+
+    required('type', 'property type');
+    required('villageOrTown', 'village/town');
+    required('mandal', 'mandal');
+    required('district', 'district');
+
+    if (value?.type === 'LAND' || value?.type === 'PLOT') {
+      if (value.areaValue === null || value.areaValue === undefined || value.areaValue === '') missing.push('area');
+      required('areaUnit', 'area unit');
+      required('northBoundary', 'north boundary');
+      required('southBoundary', 'south boundary');
+      required('eastBoundary', 'east boundary');
+      required('westBoundary', 'west boundary');
+    }
+    if (value?.type === 'HOUSE' || value?.type === 'COMMERCIAL') {
+      required('hn', 'house/door number');
+      required('street', 'street');
+    }
+    if (value?.type === 'APARTMENT') {
+      required('flatNo', 'flat number');
+      required('buildingName', 'building/apartment name');
+      required('street', 'street');
+    }
+    if (value?.areaValue !== null && value?.areaValue !== undefined && value?.areaValue !== '') {
+      required('areaUnit', 'area unit');
+    }
+    return missing.length ? { propertyRequirements: missing } : null;
+  };
+
+  isLandOrPlot(control: AbstractControl): boolean {
+    return ['LAND', 'PLOT'].includes(control.get('type')?.value);
+  }
+
+  isHouse(control: AbstractControl): boolean {
+    return control.get('type')?.value === 'HOUSE';
+  }
+
+  isApartment(control: AbstractControl): boolean {
+    return control.get('type')?.value === 'APARTMENT';
+  }
+
+  isCommercial(control: AbstractControl): boolean {
+    return control.get('type')?.value === 'COMMERCIAL';
+  }
+
+  isBuilding(control: AbstractControl): boolean {
+    return ['HOUSE', 'APARTMENT', 'COMMERCIAL'].includes(control.get('type')?.value);
+  }
+
+  private normalizePropertyType(type: string | undefined): string {
+    const normalized = (type || '').toUpperCase();
+    if (normalized.includes('AGRICULTURAL') || normalized === 'LAND') return 'LAND';
+    if (normalized.includes('PLOT') || normalized === 'PLOT') return 'PLOT';
+    if (normalized.includes('FLAT') || normalized.includes('APARTMENT')) return 'APARTMENT';
+    if (normalized.includes('HOUSE') || normalized.includes('VILLA')) return 'HOUSE';
+    if (normalized.includes('COMMERCIAL')) return 'COMMERCIAL';
+    return type || '';
   }
 
   createPartyGroup(partyType: string = 'PLAINTIFF'): FormGroup {
@@ -235,7 +315,7 @@ export class SuitFormComponent implements OnInit {
       this.propertyFormArray.clear();
       suit.property.forEach(pr => {
         const group = this.createPropertyFormGroup();
-        group.patchValue(pr);
+        group.patchValue({ ...pr, type: this.normalizePropertyType(pr.type) });
         this.propertyFormArray.push(group);
       });
     }
@@ -276,7 +356,23 @@ export class SuitFormComponent implements OnInit {
         extent: p.extent ?? '',
         syn: p.syn ?? '',
         hn: p.hn ?? '',
-        plotNo: p.plotNo ?? ''
+        plotNo: p.plotNo ?? '',
+        areaValue: p.areaValue != null ? Number(p.areaValue) : undefined,
+        areaUnit: p.areaUnit ?? '',
+        guntas: p.guntas != null ? Number(p.guntas) : undefined,
+        flatNo: p.flatNo ?? '',
+        buildingName: p.buildingName ?? '',
+        street: p.street ?? '',
+        locality: p.locality ?? '',
+        villageOrTown: p.villageOrTown ?? '',
+        mandal: p.mandal ?? '',
+        district: p.district ?? '',
+        state: p.state ?? '',
+        pincode: p.pincode ?? '',
+        northBoundary: p.northBoundary ?? '',
+        southBoundary: p.southBoundary ?? '',
+        eastBoundary: p.eastBoundary ?? '',
+        westBoundary: p.westBoundary ?? ''
       })),
       date: new Date().toISOString(),
       suitType: rawValue.suitType ?? '',
@@ -307,6 +403,8 @@ export class SuitFormComponent implements OnInit {
         this.activeTab = 'plaintiffs';
       } else if (!this.isDefendantsTabValid()) {
         this.activeTab = 'defendants';
+      } else if (this.propertyFormArray.invalid) {
+        this.activeTab = 'property';
       }
     }
   }

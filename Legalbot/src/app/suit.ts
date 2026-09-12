@@ -107,6 +107,22 @@ export class property {
     syn: string | undefined;
     hn: string | undefined;
     plotNo: string | undefined;
+    areaValue: number | undefined;
+    areaUnit: string | undefined;
+    guntas: number | undefined;
+    flatNo: string | undefined;
+    buildingName: string | undefined;
+    street: string | undefined;
+    locality: string | undefined;
+    villageOrTown: string | undefined;
+    mandal: string | undefined;
+    district: string | undefined;
+    state: string | undefined;
+    pincode: string | undefined;
+    northBoundary: string | undefined;
+    southBoundary: string | undefined;
+    eastBoundary: string | undefined;
+    westBoundary: string | undefined;
 
     static createForm(prop?: Partial<property>): FormGroup {
         return new FormGroup<PropertyFormControls>({
@@ -116,6 +132,22 @@ export class property {
             syn: new FormControl(prop?.syn ?? ""),
             hn: new FormControl(prop?.hn ?? ""),
             plotNo: new FormControl(prop?.plotNo ?? ""),
+            areaValue: new FormControl(prop?.areaValue ?? null),
+            areaUnit: new FormControl(prop?.areaUnit ?? ""),
+            guntas: new FormControl(prop?.guntas ?? null),
+            flatNo: new FormControl(prop?.flatNo ?? ""),
+            buildingName: new FormControl(prop?.buildingName ?? ""),
+            street: new FormControl(prop?.street ?? ""),
+            locality: new FormControl(prop?.locality ?? ""),
+            villageOrTown: new FormControl(prop?.villageOrTown ?? ""),
+            mandal: new FormControl(prop?.mandal ?? ""),
+            district: new FormControl(prop?.district ?? ""),
+            state: new FormControl(prop?.state ?? ""),
+            pincode: new FormControl(prop?.pincode ?? ""),
+            northBoundary: new FormControl(prop?.northBoundary ?? ""),
+            southBoundary: new FormControl(prop?.southBoundary ?? ""),
+            eastBoundary: new FormControl(prop?.eastBoundary ?? ""),
+            westBoundary: new FormControl(prop?.westBoundary ?? ""),
         });
     }
 }
@@ -167,6 +199,22 @@ export class PropertyDto {
     syn?: string;
     hn?: string;
     plotNo?: string;
+    areaValue?: number;
+    areaUnit?: string;
+    guntas?: number;
+    flatNo?: string;
+    buildingName?: string;
+    street?: string;
+    locality?: string;
+    villageOrTown?: string;
+    mandal?: string;
+    district?: string;
+    state?: string;
+    pincode?: string;
+    northBoundary?: string;
+    southBoundary?: string;
+    eastBoundary?: string;
+    westBoundary?: string;
 }
 
 export class GenerateRequest {
@@ -268,6 +316,22 @@ export interface PropertyFormControls {
     syn: FormControl<string | null>;
     hn: FormControl<string | null>;
     plotNo: FormControl<string | null>;
+    areaValue: FormControl<number | null>;
+    areaUnit: FormControl<string | null>;
+    guntas: FormControl<number | null>;
+    flatNo: FormControl<string | null>;
+    buildingName: FormControl<string | null>;
+    street: FormControl<string | null>;
+    locality: FormControl<string | null>;
+    villageOrTown: FormControl<string | null>;
+    mandal: FormControl<string | null>;
+    district: FormControl<string | null>;
+    state: FormControl<string | null>;
+    pincode: FormControl<string | null>;
+    northBoundary: FormControl<string | null>;
+    southBoundary: FormControl<string | null>;
+    eastBoundary: FormControl<string | null>;
+    westBoundary: FormControl<string | null>;
 }
 
 export interface PartyFormControls {

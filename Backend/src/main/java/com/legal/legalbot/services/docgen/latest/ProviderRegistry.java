@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.time.Year;
 
 import com.legal.legalbot.model.Party;
+import com.legal.legalbot.model.Property;
 import com.legal.legalbot.model.Suit;
 import com.legal.legalbot.services.docgen.internal.DraftContext;
 import com.legal.legalbot.services.docgen.internal.RenderContext;
@@ -54,7 +55,13 @@ public class ProviderRegistry {
         } else if ("VERIFICATION".equalsIgnoreCase(sectionKey)) {
             list.add(new RenderContext("VERIFICATION", "VERIFICATION: Verified at " + cityStr + " that the contents of paragraphs of the plaint are true to the best of my knowledge and legal advice."));
         } else if ("PROPERTY_SCHEDULE".equalsIgnoreCase(sectionKey)) {
-            list.add(new RenderContext("PROPERTY_SCHEDULE", "SCHEDULE PROPERTY: All that piece and parcel of the schedule property situated within the jurisdiction of this Hon'ble Court."));
+            if (suit != null && suit.getProperty() != null && !suit.getProperty().isEmpty()) {
+                for (int index = 0; index < suit.getProperty().size(); index++) {
+                    list.add(new RenderContext("PROPERTY_SCHEDULE", propertySchedule(suit.getProperty().get(index), index + 1)));
+                }
+            } else {
+                list.add(new RenderContext("PROPERTY_SCHEDULE", "SCHEDULE PROPERTY: All that piece and parcel of the schedule property situated within the jurisdiction of this Hon'ble Court."));
+            }
         } else if ("INTRO".equalsIgnoreCase(sectionKey)) {
             list.add(new RenderContext("INTRO", "May it please Your Honour,"));
         } else {
@@ -126,5 +133,110 @@ public class ProviderRegistry {
             return suit.getRelief();
         }
         return "As set out in the plaint";
+    }
+
+    private String propertySchedule(Property property, int index) {
+        StringBuilder schedule = new StringBuilder("SCHEDULE PROPERTY - ").append(index).append(":\n");
+        schedule.append("All that piece and parcel of the ")
+                .append(propertyTypeLabel(property.getType()));
+
+        if (property.getSyn() != null && !property.getSyn().isBlank()) {
+            schedule.append(", bearing Survey No. ").append(property.getSyn());
+        }
+        if (property.getPlotNo() != null && !property.getPlotNo().isBlank()) {
+            schedule.append(", Plot No. ").append(property.getPlotNo());
+        }
+        if (property.getFlatNo() != null && !property.getFlatNo().isBlank()) {
+            schedule.append(", Flat No. ").append(property.getFlatNo());
+        }
+        if (property.getHn() != null && !property.getHn().isBlank()) {
+            schedule.append(", Door/House No. ").append(property.getHn());
+        }
+        if (property.getAreaValue() != null && property.getAreaUnit() != null && !property.getAreaUnit().isBlank()) {
+            schedule.append(", measuring ").append(property.getAreaValue()).append(" ")
+                    .append(areaUnitLabel(property.getAreaUnit()));
+            if ("ACRE".equalsIgnoreCase(property.getAreaUnit()) && property.getGuntas() != null) {
+                schedule.append(" and ").append(property.getGuntas()).append(" Guntas");
+            }
+        } else if (property.getExtent() != null && !property.getExtent().isBlank()) {
+            schedule.append(", measuring ").append(property.getExtent());
+        }
+
+        String location = labeledLocation(property);
+        if (!location.isBlank()) {
+            schedule.append(".\nSituated at: ").append(location);
+        }
+
+        String boundaries = joinBoundaries(property);
+        if (!boundaries.isBlank()) {
+            schedule.append(".\nBoundaries: ").append(boundaries);
+        }
+        return schedule.append('.').toString();
+    }
+
+    private String propertyTypeLabel(String type) {
+        if (type == null || type.isBlank()) {
+            return "schedule property";
+        }
+        return switch (type.toUpperCase()) {
+            case "LAND" -> "agricultural land";
+            case "PLOT" -> "open plot/site";
+            case "HOUSE" -> "residential house/building";
+            case "APARTMENT" -> "flat/apartment";
+            case "COMMERCIAL" -> "commercial premises";
+            default -> type;
+        };
+    }
+
+    private String areaUnitLabel(String unit) {
+        return switch (unit.toUpperCase()) {
+            case "SQFT" -> "Square Feet";
+            case "SQYD" -> "Square Yards";
+            case "GUNTA" -> "Guntas";
+            case "ACRE" -> "Acres";
+            default -> unit;
+        };
+    }
+
+    private String joinNonBlank(String... values) {
+        return java.util.Arrays.stream(values)
+                .filter(value -> value != null && !value.isBlank())
+                .collect(java.util.stream.Collectors.joining(", "));
+    }
+
+    private String labeledLocation(Property property) {
+        List<String> location = new ArrayList<>();
+        addLocation(location, "Door/House No.", property.getHn());
+        addLocation(location, "Flat No.", property.getFlatNo());
+        addLocation(location, "Building", property.getBuildingName());
+        addLocation(location, "Street", property.getStreet());
+        addLocation(location, "Locality", property.getLocality());
+        addLocation(location, "Village/Town", property.getVillageOrTown());
+        addLocation(location, "Mandal", property.getMandal());
+        addLocation(location, "District", property.getDistrict());
+        addLocation(location, "State", property.getState());
+        addLocation(location, "PIN", property.getPincode());
+        return String.join(", ", location);
+    }
+
+    private void addLocation(List<String> location, String label, String value) {
+        if (value != null && !value.isBlank()) {
+            location.add(label + ": " + value);
+        }
+    }
+
+    private String joinBoundaries(Property property) {
+        List<String> boundaries = new ArrayList<>();
+        addBoundary(boundaries, "North", property.getNorthBoundary());
+        addBoundary(boundaries, "South", property.getSouthBoundary());
+        addBoundary(boundaries, "East", property.getEastBoundary());
+        addBoundary(boundaries, "West", property.getWestBoundary());
+        return String.join("; ", boundaries);
+    }
+
+    private void addBoundary(List<String> boundaries, String direction, String value) {
+        if (value != null && !value.isBlank()) {
+            boundaries.add(direction + ": " + value);
+        }
     }
 }

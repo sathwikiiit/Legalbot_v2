@@ -236,6 +236,25 @@
   line-height: 1.5;
 }
 
+.property-subheading {
+  margin: 1.25rem 0 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.property-validation {
+  margin-top: 0.9rem;
+  padding: 0.7rem 0.85rem;
+  border-left: 3px solid #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  font-size: 12px;
+}
+
 /* Step Footer */
 .step-footer {
   display: flex;
