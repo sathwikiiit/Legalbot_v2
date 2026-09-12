@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import {
   AiStepRequest,
   BuildDocumentRequest,
@@ -27,7 +28,7 @@ export class FetcherService {
   change$ = this.change.asObservable();
 
   constructor(private client: HttpClient) {
-    let baseUrl = (window as any)['API_URL'] || 'http://localhost:9090';
+    let baseUrl = (window as Window & { API_URL?: string }).API_URL || environment.apiUrl;
     if (!baseUrl.endsWith('/')) {
       baseUrl += '/';
     }
